@@ -340,3 +340,40 @@ document.addEventListener('DOMContentLoaded',render);
     return oldChatAnswer(q);
   };
 })();
+
+// Object-specific work actions and deeper operational pages.
+(function(){
+  const actionButton=(label,action,id,cls='')=>'<button class="btn '+cls+'" data-action="'+action+'" data-id="'+id+'">'+label+'</button>';
+  renderers.receiving=function(){
+    return '<div class="grid kpis">'+kpi('Inbound shipments',S.shipments.length,'Across both DCs')+kpi('Awaiting inspection',S.shipments.filter(x=>x.status!=='Received').length,'Count and condition check','warn')+kpi('Cases expected',S.shipments.filter(x=>x.status!=='Received').reduce((a,x)=>a+x.cases,0),'ASN quantities')+kpi('Supplier variance','1','Requires reconciliation','bad')+'</div>'+card('Inbound receiving queue',table(['ASN','Supplier','PO','Destination','ETA','Cases','Status','Action'],S.shipments.map(s=>'<tr><td><strong>'+s.id+'</strong></td><td>'+s.supplier+'</td><td>'+s.po+'</td><td>'+s.dc+'</td><td>'+s.eta+'</td><td>'+s.cases+'</td><td>'+status(s.status)+'</td><td>'+(s.status==='Received'?status('Received'):actionButton('Inspect '+s.id,'receive-specific',s.id,'primary'))+'</td></tr>')),'Select the shipment being inspected. Real receiving should record accepted, rejected and short quantities separately.',btn('＋ Record unscheduled delivery','new-receipt','primary'));
+  };
+  renderers.risks=function(){
+    return '<div class="grid kpis">'+kpi('Open risks & issues',S.risks.filter(r=>r.status!=='Closed').length,'Across enterprise initiatives')+kpi('Critical / high',S.risks.filter(r=>/Critical|High/.test(r.severity)&&r.status!=='Closed').length,'Escalation threshold','bad')+kpi('Past-due attention',S.risks.filter(r=>r.status!=='Closed'&&/Nov 2[0-9]/.test(r.due)).length,'Illustrative due-date watch','warn')+kpi('Accountable owners',new Set(S.risks.map(r=>r.owner)).size,'Named responsibility')+'</div>'+card('RAID register',table(['ID','Risk / issue','Area','Owner','Severity','Due','Status','Action'],S.risks.map(r=>'<tr><td><strong>'+r.id+'</strong></td><td>'+r.title+'</td><td>'+r.area+'</td><td>'+r.owner+'</td><td>'+status(r.severity)+'</td><td>'+r.due+'</td><td>'+status(r.status)+'</td><td>'+(r.status==='Closed'?status('Closed'):actionButton('Resolve '+r.id,'resolve-specific-risk',r.id))+'</td></tr>')),'Close only the selected risk after mitigation evidence and owner confirmation.',btn('＋ Log RAID item','new-risk','primary'));
+  };
+  renderers['product-pipeline']=function(){
+    return '<div class="grid kpis">'+kpi('Active introductions',S.pipeline.length,'Across supplier categories')+kpi('Awaiting approval',S.pipeline.filter(x=>x.stage<7).length,'Quality / commercial gates','warn')+kpi('Gate evidence due',S.pipeline.filter(x=>x.risk!=='None').length,'Review exceptions')+kpi('Catalog breadth',S.products.length,'Sample SKUs')+'</div><div class="grid two">'+card('Product introduction portfolio',table(['Initiative','Supplier','Current stage','Owner','Target launch','Exception','Action'],S.pipeline.map(x=>'<tr><td><strong>'+x.name+'</strong><br><small>'+x.id+'</small></td><td>'+x.supplier+'</td><td>'+x.stage+'/12 · '+S.productStages[x.stage-1]+'</td><td>'+x.owner+'</td><td>'+x.target+'</td><td>'+status(x.risk)+'</td><td>'+actionButton('Review '+x.id,'advance-specific-product',x.id)+'</td></tr>')),'A gate review advances only the selected product introduction',btn('＋ New product idea','new-product','primary'))+card('Featured introduction · '+S.pipeline[0].name,'<div class="eyebrow">'+S.pipeline[0].id+' · GATE '+S.pipeline[0].stage+' OF 12</div>'+stagesList(S.productStages,S.pipeline[0].stage),'Supplier → tasting → quality → commercial → SKU → launch')+'</div><div class="callout" style="margin-top:14px">Portfolio prototype: gate progression is simulated. In a production workflow, the gate would require evidence, named approvers and a recorded approve / conditional / hold decision.</div>';
+  };
+  renderers.expansion=function(){
+    const x=S.expansions[0];
+    return '<div class="grid kpis">'+kpi('Active expansion projects',S.expansions.length,'Markets in development')+kpi('Capital portfolio',money(S.expansions.reduce((a,x)=>a+x.budget,0)),'Approved budgets')+kpi('Forecast variance',money(S.expansions.reduce((a,x)=>a+x.forecast-x.budget,0)),'Forecast vs approved','warn')+kpi('Opening pipeline',S.expansions.filter(x=>x.stage<12).length,'Locations not yet stabilized')+'</div>'+card('Expansion portfolio',table(['Project','Stage gate','Budget','Spent','Forecast','Opening','Health','Action'],S.expansions.map(x=>'<tr><td><strong>'+x.name+'</strong><br><small>'+x.id+' · '+x.city+'</small></td><td>'+x.stage+'/12 · '+S.stages[x.stage-1]+'</td><td>'+money(x.budget)+'</td><td>'+money(x.spent)+'</td><td>'+money(x.forecast)+'</td><td>'+x.open+'</td><td>'+status(x.health)+'</td><td>'+actionButton('Review '+x.id,'advance-specific-expansion',x.id)+'</td></tr>')),'Each project has its own accountable owner, budget and readiness sequence',btn('＋ New expansion project','new-expansion','primary'))+'<div class="grid two" style="margin-top:14px">'+card('Featured project · '+x.name,'<div class="eyebrow">STAGE '+x.stage+' OF 12 · '+x.completion+'% COMPLETE</div>'+stagesList(S.stages,x.stage),'Site → permits → construction → systems → people → supply → launch')+card('Opening readiness dimensions',['Site & lease','Permits & inspections','Construction & facilities','Technology & connectivity','Supplier & inventory readiness','Leadership & crew staffing','Customer experience & launch'].map((v,i)=>'<div class="metric-line"><span>'+v+'</span><b>'+[100,88,93,86,82,68,55][i]+'%</b></div><div class="progress"><i style="width:'+[100,88,93,86,82,68,55][i]+'%"></i></div>').join(''),'Gate evidence must be reviewed by the accountable functional owner')+'</div>';
+  };
+  // Per-SKU buying actions ensure the buyer is not accidentally ordering the first low-stock item.
+  const priorTargetAction=targetAction;
+  targetAction=function(action,id){
+    if(action==='create-po-specific'){
+      const p=S.products.find(x=>x.sku===id);if(!p)return notify('SKU not found');
+      const supplier=S.suppliers.find(x=>x.name===p.supplier);
+      if(supplier&&supplier.status!=='Approved')return notify('Supplier is not approved. Resolve supplier review before placing an order.');
+      const qty=Math.max(p.par*2-p.stock,1),poId='PO-'+(48310+S.pos.length);
+      S.pos.unshift({id:poId,supplier:p.supplier,date:'Nov 20',amount:Math.round(qty*p.cost),status:'Draft',lines:1,sku:p.sku,qty});
+      S.shipments.unshift({id:'ASN-'+(7330+S.shipments.length),po:poId,supplier:p.supplier,dc:'DC West',eta:'Tomorrow · 8:00 AM',cases:qty,status:'Scheduled'});
+      notify(poId+' created for '+p.name+' · '+qty+' units');render();return true;
+    }
+    return priorTargetAction(action,id);
+  };
+  const oldProc=renderers.procurement;
+  renderers.procurement=function(){
+    const low=S.products.filter(p=>p.stock<p.par);
+    return '<div class="grid kpis">'+kpi('Open purchase orders',S.pos.filter(p=>p.status!=='Received').length,'Supplier commitments')+kpi('Committed spend',money(S.pos.reduce((a,p)=>a+p.amount,0)),'Across active POs')+kpi('Demand alerts',low.length,'Below-par candidates','warn')+kpi('Supplier confirmations','94%','Illustrative service level')+'</div>'+card('Demand & replenishment workbench',table(['SKU / item','On hand','Par','Suggested buy','Supplier','Supplier status','Action'],low.map(p=>{const sup=S.suppliers.find(x=>x.name===p.supplier);return '<tr><td><strong>'+p.name+'</strong><br><small>'+p.sku+'</small></td><td>'+p.stock+'</td><td>'+p.par+'</td><td>'+Math.max(p.par*2-p.stock,0)+'</td><td>'+p.supplier+'</td><td>'+status(sup?sup.status:'Supplier not found')+'</td><td>'+actionButton('Create PO for '+p.sku,'create-po-specific',p.sku,'primary')+'</td></tr>'})),'Suggested quantities are illustrative; buyer should validate demand, lead time, MOQ and supplier approval.')+oldProc().slice(oldProc().indexOf('<section class="card">'));
+  };
+})();
