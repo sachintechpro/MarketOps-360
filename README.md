@@ -1,33 +1,38 @@
-# MarketOps 360
+# UOWE MarketOps 360
 
-**Connected retail operations — an end-to-end grocery retail experience prototype.**
+**A connected retail operating model — from customer experience to enterprise execution.**
 
-MarketOps 360 is a front-end-only demonstration of a connected grocery retailer: customer shopping, store operations, merchandising, procurement, warehouse execution, workforce, analytics and enterprise expansion/program delivery.
+MarketOps 360 is a front-end-only enterprise retail prototype connecting customer shopping, product lifecycle, suppliers, procurement, distribution, inventory, store operations, workforce, quality, finance, expansion and IT portfolio delivery.
 
-## Demo experiences
+## Experience architecture
 
-- **Customer storefront:** departments, product discovery, search, category filters, basket and simulated checkout/order history.
-- **Retail operations:** executive and regional overview, stores, product catalog, category taxonomy, promotions, inventory, procurement, supplier directory, purchase orders, warehouse, receiving, transfers, POS, customer fulfillment, workforce and exception tasks.
-- **Enterprise delivery:** expansion stage gates, program portfolio, project delivery, release calendar, risks/issues/decisions and operational analytics.
-- **Role-based navigation:** Executive, Regional Manager, Store Manager, Merchandising Manager, Buyer/Procurement, Warehouse Manager, Store Associate, IT Program Manager and Customer.
-- **Connected demo behavior:** shared product/inventory/order/task state across the experiences, simulated inventory adjustments, purchase/order actions and customer basket.
+- Customer discovery, category browsing, search, basket, simulated pickup checkout and order history.
+- Executive and regional command center, store directory and performance analytics.
+- Product introduction lifecycle with 12 controlled gates from supplier discovery to continue / revise / exit.
+- Product catalog, SKU master, assortment planning, promotions and pricing.
+- Supplier onboarding and scorecards, demand planning, procurement, purchase orders and supplier confirmations.
+- Distribution centers, inbound appointments, receiving inspection, inventory control and store transfers.
+- Store daily operating rhythm, workforce coverage, quality, food safety, customer service and community.
+- Finance, store economics and capital governance.
+- Expansion command center with 12 stage gates, budgets, actuals, forecast, readiness, RAID, go-live and stabilization.
+- IT portfolio delivery, initiative health, releases, dependencies, governance cadence and value realization.
+- Reports, administration and 15 role experiences.
+
+## Connected workflows
+
+1. Product introduction: buyer idea → supplier submission and samples → tasting → quality/compliance → cost and price → approval → SKU/barcode → assortment → initial PO → receiving and launch → performance monitoring → continue/revise/exit.
+2. Procurement to store: demand and stock signals → buying decision → PO → supplier confirmation → DC appointment → receiving and inspection → inventory release → allocation and dispatch → store receipt → availability and replenishment.
+3. Store operations: opening controls → daily execution → freshness, safety and service → workforce coverage → exceptions and corrective actions → closing and handover.
+4. Store expansion: market assessment → site evaluation → business approval → lease/legal → permits → construction → technology/facilities → supply readiness → workforce readiness → store readiness → launch → stabilization/hypercare.
+5. Technology delivery: strategic outcomes → portfolio initiatives → project execution → dependencies and RAID → testing/release readiness → go-live → value realization.
 
 ## Run locally
-
-Open `index.html` in a browser. No build step, backend, database or API keys are required.
+Open index.html in a browser. No build step or package installation is required.
 
 ## Deploy on Render
+Use a Static Site connected to this repository. Leave the build command blank and use the repository root (.) as the publish directory.
 
-Create a **Static Site** using this repository:
-- Build command: leave blank
-- Publish directory: `.`
+## Demo data and limitations
+This is a front-end-only prototype. Data is illustrative and held in browser memory; refresh resets the session. Actions simulate connected behavior across role experiences but do not call live APIs. There is no backend, database, real identity provider, enforced authorization, payment processor, tax engine, ERP/POS integration, supplier EDI, live notifications or production security. Role switching demonstrates the intended experience and responsibility boundaries, not secure access control.
 
-Alternatively, use the included `render.yaml` blueprint.
-
-## Demo limitations
-
-This is an intentionally front-end-only prototype. Data is illustrative and held in browser memory for the active session. Authentication, payment processing, tax calculation, live inventory synchronization, supplier/ERP/POS integrations, real notifications, persistence and production security are not implemented. Role selection demonstrates role-specific experiences; it is not an authorization boundary.
-
-## Design intent
-
-The prototype uses a fictional retail identity and original sample content. It is not affiliated with or endorsed by any retailer. Product names, prices, locations, supplier names, KPIs and operating metrics are illustrative.
+All brand identity, locations, products, suppliers, metrics and financial values are fictional demonstration content. The prototype is not affiliated with any real retailer.
