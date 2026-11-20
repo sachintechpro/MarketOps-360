@@ -12,3 +12,21 @@
 .chat-head b{display:block;font:800 12px Manrope}.chat-head small{display:block;color:#b8c2d2;font-size:9px;margin-top:3px}
 .chat-close{border:0;background:transparent;color:white;font-size:21px}.chat-body{flex:1;overflow:auto;padding:13px;background:#f5f6f8}.chat-msg{max-width:88%;padding:9px 11px;border-radius:11px;margin-bottom:9px;font-size:10px;line-height:1.5}.chat-msg.assistant{background:white;border:1px solid var(--line);color:var(--ink)}.chat-msg.user{margin-left:auto;background:#fff0e9;color:#8f3f21}.chat-form{display:flex;gap:7px;padding:10px;border-top:1px solid var(--line);background:white}.chat-form input{flex:1;min-width:0;border:1px solid var(--line);border-radius:9px;padding:9px 10px;font-size:10px;outline:none}.chat-form button{border:0;background:var(--orange);color:white;border-radius:9px;padding:0 13px;font-size:10px;font-weight:800}
 @media(max-width:760px){#contextChat{right:14px;bottom:14px}.chat-panel{height:min(520px,70vh)}.has-tip:hover::after{max-width:220px}}
+
+/* Role-focused workspaces and scenario validation */
+.role-hero{background:linear-gradient(120deg,#17243a,#243a55);color:#fff;border-radius:18px;padding:25px 27px;margin-bottom:14px}
+.role-hero .eyebrow{color:#c6d6ee;font-size:9px;letter-spacing:1.4px;font-weight:800}
+.role-hero h2{font:800 25px Manrope;margin:9px 0 6px;letter-spacing:-.7px}
+.role-hero p{color:#d2dbea;font-size:12px;line-height:1.55;max-width:700px;margin:0 0 15px}
+.role-hero .btn{background:#fff;color:#1b2a40}
+.role-content{align-items:start}
+.role-content .card{min-height:250px}
+.role-callout{margin-top:14px}
+.test-results{margin-top:14px;border-top:1px solid var(--line);padding-top:8px}
+.test-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 2px;border-bottom:1px solid #eef0f4}
+.test-row strong{display:block;font-size:11px}
+.test-row small{display:block;font-size:10px;color:var(--muted);margin-top:3px;line-height:1.4}
+.test-row .status{flex-shrink:0}
+.role-kpis .kpi{min-width:0}
+@media(min-width:1200px){.role-hero h2{font-size:28px}}
+@media(max-width:760px){.role-hero{padding:19px}.role-hero h2{font-size:22px}.test-row{align-items:flex-start}.test-row small{max-width:230px}}
