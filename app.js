@@ -239,6 +239,12 @@ document.addEventListener('DOMContentLoaded',render);
     return '<div class="role-hero"><div class="eyebrow">'+c.eyebrow+' · '+S.role.toUpperCase()+'</div><h2>'+c.headline+'</h2><p>'+c.sub+'</p>'+btn(c.actionLabel,c.action,'primary')+'</div><div class="grid kpis role-kpis">'+cards+'</div><div class="grid two role-content">'+card(taskTitle,rows,'Prioritized by business impact and next accountable owner',btn('Open full work area',c.action)) + supporting+'</div><div class="callout role-callout">Role perspective: '+c.sub+' The same business records remain shared; this workspace changes the priorities, decisions and actions presented to this role.</div>';
   }
 
+  // Make the role-aware home available to every internal persona.
+  const overviewEntry=groups[0][1].find(x=>x[0]==='overview');
+  if(overviewEntry)overviewEntry[3]=roles.filter(r=>r!=='Customer');
+  // Extend the customer and catalog category filters for the larger assortment.
+  const oldShop=shop;
+  shop=function(){return oldShop().replace("'Meat & Seafood'].map(d=>","'Meat & Seafood','Household'].map(d=>");};
   // Use the role-aware workspace as the home for every internal role.
   renderers.overview=roleHome;
 
