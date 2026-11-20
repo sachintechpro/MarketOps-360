@@ -1,8 +1,8 @@
 # MarketOps 360
 
-**A connected retail operating model — from customer experience to enterprise execution.**
+**A connected regional specialty-grocery operating model — from customer experience to enterprise execution.**
 
-MarketOps 360 is an interactive demonstration of how a modern retail organization can connect customer experience, merchandising, suppliers, procurement, distribution, inventory, store operations, workforce, quality, finance, expansion and technology delivery through a shared operating model.
+MarketOps 360 is an interactive demonstration of a regional specialty-grocery business with multiple store locations, regional distribution centers, a broad grocery and household assortment, supplier relationships, fresh-food controls and an enterprise support office. It connects customer experience, merchandising, suppliers, procurement, distribution, inventory, store operations, workforce, quality, finance, expansion and technology delivery through shared operating records. The operating footprint is illustrative and designed to represent the complexity of a growing mid-sized regional retailer, not the actual size or systems of any named company.
 
 ## How to use the demo
 
@@ -27,6 +27,8 @@ Use the role selector to switch between the available experiences:
 - People Manager
 - System Administrator
 - Customer
+
+Internal roles now receive role-focused home workspaces: executives see decisions and capital exposure; buyers see product and margin signals; procurement sees replenishment; DC leaders see inbound flow; regional leaders see store exceptions; store leaders and crew see shift work; and enterprise functions see their respective governance queues.
 
 Each role presents the information, priorities and actions most relevant to that responsibility.
 
@@ -164,6 +166,27 @@ Examples:
 
 These connections demonstrate how different business functions can operate from a common flow of information.
 
+## Scenario & QA lab
+
+The **Scenario & QA Lab** is available to Executive, IT Program Manager and System Administrator roles. It contains repeatable, isolated validation scenarios and business use cases spanning the operating model. Run the suite to check core business rules without mutating the live demonstration records. The current suite covers customer stock decrement, out-of-stock prevention, PO-to-ASN linkage, partial receiving, inventory release, quality holds, transfer conservation, transfer quantity validation, product and expansion gate prerequisites, financial variance, executive risk visibility, labor gaps, customer issue escalation, IT release evidence, supplier scorecards, recall traceability, promotion margin floors, invoice matching and customer portal navigation.
+
+### Additional business use cases
+
+- Fresh produce replenishment and supplier capacity
+- Cold-chain excursion, quarantine and quality disposition
+- New store opening across permits, technology, staffing and initial inventory
+- Customer order, pickup, substitution and stock reconciliation
+- Supplier short shipment and PO balance reconciliation
+- Invoice / PO / receipt three-way match
+- Product recall, lot traceability and store/DC hold confirmation
+- Peak-period labor planning and opening-team readiness
+- Store-to-store transfer and stock conservation
+- Promotion funding, price and margin-floor approval
+- Store technology release, pilot, rollout and hypercare
+- Shrink, waste, expiry and markdown controls
+
+The QA lab is a front-end simulation of business rules, not a production integration or security test harness.
+
 ## Context-aware guidance
 
 The **MarketOps Guide** chatbox is available throughout the experience.
@@ -227,6 +250,6 @@ MarketOps 360 is intended to demonstrate practical capabilities in:
 
 ## Demo environment
 
-All brands, locations, products, suppliers, employees, customers, metrics and financial values shown in the demo are fictional demonstration content.
+All brands, locations, products, suppliers, employees, customers, metrics and financial values shown in the demo are fictional demonstration content. The scale assumptions are intended to represent a growing regional specialty-grocery operator with multiple stores, two regional distribution centers, a few hundred employees and a broad everyday assortment. They are not factual claims about any specific retailer.
 
 The experience is designed as a portfolio demonstration of an integrated retail operating model and is not affiliated with any real retailer.
