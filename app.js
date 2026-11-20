@@ -118,3 +118,225 @@ if(a==='new-transfer')return modal('Create store transfer','<form>'+sel('From st
 if(a==='transfer-action'){let x=(S.transferLog||[]).find(t=>t.status!=='Completed');if(x){x.status=x.status==='Awaiting dispatch'?'In transit':'Completed';notify(x.id+' status updated to '+x.status);render();return}return notify('Seed transfer status updated in this demo view')}
 if(a==='governance'||a==='noop')return notify('Demo action acknowledged');notify('Demo interaction selected: '+a.replaceAll('-',' '))}
 document.addEventListener('DOMContentLoaded',render);
+
+// MarketOps 360 — role-aware operating model and scenario lab (v2)
+(function(){
+  // A regional specialty-grocery model: multiple regions, stores, DCs and a broad assortment.
+  const extraProducts=[
+    ['PRD-1102','Cara Cara Oranges','Produce','Valley Fresh Farms',3.99,1.85,52,42,'🍊'],
+    ['PRD-1114','English Cucumbers','Produce','Valley Fresh Farms',1.79,.72,28,32,'🥒'],
+    ['PRD-1120','Avocados · 4 count','Produce','Coastal Produce Partners',4.99,2.35,34,30,'🥑'],
+    ['DRY-3022','Greek Yogurt · Plain','Dairy & Alternatives','Meadow Creek Dairy',5.49,2.8,26,24,'🥣'],
+    ['DRY-3030','Cultured Oat Yogurt','Dairy & Alternatives','Pacific Plant Foods',4.29,2.1,19,22,'🥛'],
+    ['PAN-2044','Olive Oil · Extra Virgin','Pantry','Olive Grove Imports',11.99,6.1,37,24,'🫒'],
+    ['PAN-2052','Pasta · Bronze Cut','Pantry','Golden Grain Co.',2.99,1.25,48,36,'🍝'],
+    ['PAN-2068','Organic Chickpeas','Pantry','Harvest Kitchen',1.89,.78,41,30,'🫘'],
+    ['FRZ-4118','Wild Blueberry Blend','Frozen','East Harbor Foods',6.49,3.1,17,20,'🫐'],
+    ['FRZ-4130','Vegetable Gyoza','Frozen','East Harbor Foods',5.99,2.75,23,20,'🥟'],
+    ['BAK-5134','Seeded Country Loaf','Bakery','Local Oven Collective',6.29,3.05,15,18,'🍞'],
+    ['BAK-5142','Butter Croissants · 4 pack','Bakery','Local Oven Collective',5.99,2.85,21,20,'🥐'],
+    ['MEA-6124','Ground Turkey','Meat & Seafood','Coastal Range Poultry',7.49,4.2,13,18,'🍗'],
+    ['MEA-6138','Atlantic Salmon Portions','Meat & Seafood','Pacific Coast Seafood',12.99,7.6,11,16,'🐟'],
+    ['SNK-7118','Almond Butter Cups','Snacks','Cocoa House',4.49,1.9,32,24,'🍫'],
+    ['SNK-7130','Sea Salt Pita Chips','Snacks','Golden Grain Co.',3.79,1.6,29,24,'🥨'],
+    ['BEV-8116','Cold Brew Concentrate','Beverages','Clear Spring',7.99,3.8,18,18,'🧋'],
+    ['BEV-8128','Ginger Turmeric Shot','Beverages','Bright Root Beverage',3.49,1.55,24,24,'🧃'],
+    ['HOM-9012','Compostable Kitchen Bags','Household','Evergreen Home Goods',6.99,3.2,44,30,'🛍'],
+    ['HOM-9024','Dish Soap · Citrus','Household','Evergreen Home Goods',3.99,1.65,38,30,'🧼']
+  ];
+  extraProducts.forEach(x=>{if(!S.products.some(p=>p.sku===x[0]))S.products.push({sku:x[0],name:x[1],dept:x[2],supplier:x[3],price:x[4],cost:x[5],stock:x[6],par:x[7],emoji:x[8],status:'Active',margin:Math.round((1-x[5]/x[4])*100)});});
+  const extraStores=[
+    {id:'ST-105',name:'Pasadena Market',city:'Pasadena',region:'West',sales:128400,traffic:3240,health:'Watch',manager:'K. Morgan'},
+    {id:'ST-106',name:'Ventura Market',city:'Ventura',region:'Coastal',sales:116900,traffic:2870,health:'On track',manager:'S. Diaz'},
+    {id:'ST-107',name:'Silver Lake Market',city:'Los Angeles',region:'West',sales:139700,traffic:3520,health:'On track',manager:'T. Nguyen'},
+    {id:'ST-108',name:'Costa Mesa Market',city:'Costa Mesa',region:'South',sales:121300,traffic:3010,health:'On track',manager:'R. Shah'}
+  ];
+  extraStores.forEach(x=>{if(!S.stores.some(s=>s.id===x.id))S.stores.push(x);});
+  const extraSuppliers=[
+    ['SUP-068','Coastal Produce Partners','Produce',93,3,'Net 15','Approved'],
+    ['SUP-071','Meadow Creek Dairy','Dairy & Alternatives',95,2,'Net 15','Approved'],
+    ['SUP-074','Olive Grove Imports','Pantry',88,18,'Net 30','Approved'],
+    ['SUP-078','Harvest Kitchen','Prepared Foods',90,6,'Net 30','Approved'],
+    ['SUP-082','Pacific Coast Seafood','Meat & Seafood',86,2,'Net 15','Review'],
+    ['SUP-086','Bright Root Beverage','Beverages',92,5,'Net 30','Approved'],
+    ['SUP-091','Evergreen Home Goods','Household',89,7,'Net 30','Approved']
+  ];
+  extraSuppliers.forEach(x=>{if(!S.suppliers.some(s=>s.id===x[0]))S.suppliers.push({id:x[0],name:x[1],category:x[2],score:x[3],lead:x[4],terms:x[5],status:x[6]});});
+  S.team.push(
+    {name:'Fresh & Prepared Foods',count:38,coverage:92,open:3},
+    {name:'Store Support & Maintenance',count:17,coverage:89,open:2},
+    {name:'New Store Opening Pool',count:24,coverage:68,open:8}
+  );
+  S.tasks.push(
+    {id:'T-219',title:'Confirm cold-chain temperature excursion disposition',area:'Quality',owner:'Quality Manager',due:'Today · 12:30',status:'Open',priority:'High'},
+    {id:'T-221',title:'Approve Pasadena revised construction forecast',area:'Finance',owner:'Finance Manager',due:'Today · 2:00',status:'Open',priority:'High'},
+    {id:'T-224',title:'Confirm seafood supplier capacity for holiday demand',area:'Buying',owner:'Buyer team',due:'Tomorrow',status:'Open',priority:'Medium'},
+    {id:'T-228',title:'Complete new-hire food safety onboarding',area:'People',owner:'People Manager',due:'Nov 24',status:'Open',priority:'Medium'},
+    {id:'T-231',title:'Validate store POS release candidate',area:'Technology',owner:'IT Program Manager',due:'Nov 26',status:'In progress',priority:'High'}
+  );
+  S.dcs=[{id:'DC-W','name':'DC West','region':'West','capacity':82,'cold':76,'waves':8,'late':1},{id:'DC-S','name':'DC South','region':'South','capacity':68,'cold':71,'waves':5,'late':0}];
+  S.laborPlan=[{store:'Westside Market',budgetHours:980,scheduledHours:944,openShifts:2},{store:'North Park Market',budgetHours:860,scheduledHours:822,openShifts:3},{store:'Downtown Market',budgetHours:820,scheduledHours:748,openShifts:5},{store:'Irvine Market',budgetHours:720,scheduledHours:490,openShifts:8}];
+  S.qaChecks=[
+    {id:'QA-301',area:'Produce',check:'Receiving temperature',store:'Westside Market',status:'Pass',owner:'Fresh lead'},
+    {id:'QA-302',area:'Dairy',check:'Cooler temperature log',store:'Downtown Market',status:'Action required',owner:'Mate'},
+    {id:'QA-303',area:'Prepared foods',check:'Allergen label verification',store:'North Park Market',status:'Pass',owner:'Quality lead'},
+    {id:'QA-304',area:'Seafood',check:'Cold-chain traceability',store:'DC West',status:'Pending',owner:'DC quality'}
+  ];
+  S.customerCases=[
+    {id:'CX-8801',type:'Product quality',store:'Downtown Market',status:'Open',priority:'High',owner:'Store Captain'},
+    {id:'CX-8804',type:'Pickup delay',store:'Westside Market',status:'In progress',priority:'Medium',owner:'Mate'},
+    {id:'CX-8807',type:'Product question',store:'North Park Market',status:'Open',priority:'Low',owner:'Crew'}
+  ];
+  S.testRuns=S.testRuns||[];
+
+  const roleCopy={
+    'Executive':{eyebrow:'Enterprise outcomes',headline:'Lead the network, not the screens.',sub:'Capital, customer outcomes, store performance and enterprise decisions in one view.',kpis:[['Network sales',()=>money(S.stores.reduce((a,x)=>a+x.sales,0)),'Across 8 locations'],['Stores operating',()=>S.stores.filter(x=>x.sales>0).length,'Plus opening pipeline'],['Critical decisions',()=>S.risks.filter(x=>x.severity==='Critical'&&x.status!=='Closed').length,'Require leadership attention'],['Portfolio exposure',()=>money(S.expansions.reduce((a,x)=>a+Math.max(0,x.forecast-x.budget),0)),'Expansion forecast over budget']],focus:'Executive decisions',action:'go-risks',actionLabel:'Review decision queue'},
+    'Buyer / Merchandising':{eyebrow:'Commercial performance',headline:'Curate the range. Protect the margin.',sub:'Balance customer relevance, supplier capability, assortment productivity and commercial return.',kpis:[['Active assortment',()=>S.products.length,'Across grocery and household'],['Items below par',()=>S.products.filter(x=>x.stock<x.par).length,'Demand and availability signal'],['Supplier reviews',()=>S.suppliers.filter(x=>x.status==='Review').length,'Commercial / quality follow-up'],['New item gates',()=>S.pipeline.length,'Product introductions in flight']],focus:'Commercial decisions',action:'go-pipeline',actionLabel:'Review product pipeline'},
+    'Procurement Manager':{eyebrow:'Supply assurance',headline:'Buy to demand. Deliver to need.',sub:'Convert demand signals into supplier commitments while managing lead time, cost and service.',kpis:[['Below-par SKUs',()=>S.products.filter(x=>x.stock<x.par).length,'Replenishment candidates'],['Open POs',()=>S.pos.filter(x=>x.status!=='Received').length,'Supplier commitments'],['Inbound appointments',()=>S.shipments.filter(x=>x.status!=='Received').length,'Awaiting receipt'],['Suppliers under review',()=>S.suppliers.filter(x=>x.status==='Review').length,'Resolve before award']],focus:'Procurement work queue',action:'go-procurement',actionLabel:'Open replenishment workbench'},
+    'Distribution Manager':{eyebrow:'Network flow',headline:'Keep product moving safely.',sub:'Manage dock capacity, cold chain, receiving, pick/pack and store replenishment waves.',kpis:[['Distribution centers',()=>S.dcs.length,'West and South network'],['Inbound shipments',()=>S.shipments.filter(x=>x.status!=='Received').length,'Scheduled / arriving'],['Dock capacity · West',()=>S.dcs[0].capacity+'%','Current utilization'],['Late appointments',()=>S.shipments.filter(x=>/late/i.test(x.eta)).length,'Escalate service failures']],focus:'Distribution exceptions',action:'go-distribution',actionLabel:'Review DC operations'},
+    'Regional Manager':{eyebrow:'Regional execution',headline:'Turn store signals into action.',sub:'Compare store health, service, staffing and availability; intervene where performance is drifting.',kpis:[['Store network',()=>S.stores.length,'Across three operating regions'],['Stores on watch',()=>S.stores.filter(x=>/watch|risk/i.test(x.health)).length,'Regional intervention'],['Open store tasks',()=>S.tasks.filter(x=>x.status!=='Complete').length,'Across all work areas'],['Labor coverage',()=>Math.round(S.team.reduce((a,x)=>a+x.coverage,0)/S.team.length)+'%','Blended illustrative coverage']],focus:'Stores requiring intervention',action:'go-stores',actionLabel:'Review store performance'},
+    'Store Captain':{eyebrow:'Store leadership · today',headline:'Run a safe, ready, welcoming store.',sub:'Opening readiness, customer service, fresh availability, people coverage and close-out.',kpis:[['Opening checks',()=>'92%','3 checks need attention'],['Open tasks',()=>S.tasks.filter(x=>x.area==='Store operations'||x.area==='Quality').length,'Store-level execution'],['Customer cases',()=>S.customerCases.filter(x=>x.status!=='Resolved').length,'Service recovery queue'],['Crew coverage',()=>'91%','Today’s scheduled shift']],focus:'Today’s store operating rhythm',action:'go-storeops',actionLabel:'Open daily checklist'},
+    'Mate':{eyebrow:'Shift coordination',headline:'Keep the shift moving.',sub:'Coordinate crew assignments, replenishment, receiving and service recovery on the floor.',kpis:[['Assigned tasks',()=>S.tasks.filter(x=>['Store operations','Quality','Distribution'].includes(x.area)).length,'Across this shift'],['Urgent work',()=>S.tasks.filter(x=>x.priority==='High'&&x.status!=='Complete').length,'Prioritize now'],['Receiving checks',()=>S.shipments.filter(x=>x.status!=='Received').length,'Confirm count and condition'],['Quality actions',()=>S.qaChecks.filter(x=>x.status!=='Pass').length,'Resolve or escalate']],focus:'Shift task board',action:'go-storeops',actionLabel:'Open shift tasks'},
+    'Crew':{eyebrow:'My shift',headline:'Know what matters. Do the next task.',sub:'A simple task-first workspace for shelf care, customer help, safety and handover.',kpis:[['My open tasks',()=>S.tasks.filter(x=>x.status!=='Complete').length,'Illustrative shift assignments'],['Quality alerts',()=>S.qaChecks.filter(x=>x.status!=='Pass').length,'Tell a Mate if unsafe'],['Customer cases',()=>S.customerCases.length,'Help or escalate'],['Shift handover',()=>'1','Due at shift end']],focus:'My shift checklist',action:'go-storeops',actionLabel:'View assigned work'},
+    'Finance Manager':{eyebrow:'Financial control',headline:'Protect unit economics and investment.',sub:'Connect store contribution, labor, shrink, supplier cost, capital and forecast variance.',kpis:[['Store sales',()=>money(S.stores.reduce((a,x)=>a+x.sales,0)),'Network month to date'],['Expansion forecast',()=>money(S.expansions.reduce((a,x)=>a+x.forecast,0)),'Current estimate at completion'],['Budget exposure',()=>money(S.expansions.reduce((a,x)=>a+Math.max(0,x.forecast-x.budget),0)),'Forecast above approved budget'],['Supplier terms',()=>S.suppliers.length,'Active / review relationships']],focus:'Financial variances',action:'go-finance',actionLabel:'Review finance and forecast'},
+    'Quality Manager':{eyebrow:'Food safety & product integrity',headline:'Protect customers at every handoff.',sub:'Supplier assurance, incoming inspection, cold chain, traceability, corrective action and release decisions.',kpis:[['Open quality checks',()=>S.qaChecks.filter(x=>x.status!=='Pass').length,'Pending or action required'],['Supplier reviews',()=>S.suppliers.filter(x=>x.status==='Review').length,'Corrective follow-up'],['Receiving exceptions',()=>S.shipments.filter(x=>x.status!=='Received').length,'Inspection / disposition'],['Customer quality cases',()=>S.customerCases.filter(x=>/quality/i.test(x.type)).length,'Investigate and close']],focus:'Quality release decisions',action:'go-quality',actionLabel:'Open quality controls'},
+    'IT Program Manager':{eyebrow:'Technology value delivery',headline:'Connect outcomes, delivery and adoption.',sub:'Govern workstreams, dependencies, releases, decisions, operational readiness and measurable value.',kpis:[['Active initiatives',()=>S.initiatives.length,'Business-sponsored outcomes'],['Red / amber health',()=>S.initiatives.filter(x=>/red|amber/i.test(x.health)).length,'Recovery / decision needed'],['Open enterprise risks',()=>S.risks.filter(x=>x.status!=='Closed').length,'Cross-functional RAID'],['Forecast investment',()=>money(S.initiatives.reduce((a,x)=>a+x.budget,0)),'Approved initiative envelopes']],focus:'Program control room',action:'go-it',actionLabel:'Open IT portfolio'},
+    'Expansion Director':{eyebrow:'Growth & development',headline:'Make every opening a controlled launch.',sub:'Coordinate site, lease, permits, construction, capital, technology, people, supply and hypercare.',kpis:[['Locations in pipeline',()=>S.expansions.length,'Across development stages'],['At-risk projects',()=>S.expansions.filter(x=>/risk|watch/i.test(x.health)).length,'Leadership intervention'],['Forecast capital',()=>money(S.expansions.reduce((a,x)=>a+x.forecast,0)),'Estimate at completion'],['Gate readiness',()=>Math.round(S.expansions.reduce((a,x)=>a+x.completion,0)/S.expansions.length)+'%','Average stage progress']],focus:'Opening readiness and stage gates',action:'go-expansion',actionLabel:'Open expansion command'},
+    'People Manager':{eyebrow:'People & capability',headline:'Staff the network before demand arrives.',sub:'Connect hiring, onboarding, certification, labor plans and opening-team readiness.',kpis:[['People represented',()=>S.team.reduce((a,x)=>a+x.count,0),'Across store and support teams'],['Open shifts / roles',()=>S.team.reduce((a,x)=>a+x.open,0),'Coverage gap'],['Training completion',()=>'97%','Food safety and service'],['Opening pool coverage',()=>'68%','Irvine launch team']],focus:'Workforce readiness',action:'go-workforce',actionLabel:'Review workforce plan'},
+    'System Administrator':{eyebrow:'Platform stewardship',headline:'Keep the operating model governed.',sub:'Manage reference data, access profiles, thresholds, configuration and demo validation.',kpis:[['Role profiles',()=>roles.length,'Experience profiles'],['Active locations',()=>S.stores.length,'Store master'],['Catalog records',()=>S.products.length,'Product master'],['Scenario tests',()=>testCases.length,'Repeatable end-to-end checks']],focus:'Platform health and controls',action:'go-scenarios',actionLabel:'Open scenario lab'}
+  };
+
+  function goPage(p){S.page=p;render();}
+  const customActions={
+    'go-pipeline':'product-pipeline','go-distribution':'distribution','go-storeops':'store-ops','go-finance':'finance','go-it':'it-portfolio','go-quality':'quality','go-workforce':'workforce','go-scenarios':'scenario-lab'
+  };
+  function roleHome(){
+    if(S.role==='Customer')return dashboard();
+    const c=roleCopy[S.role]||roleCopy['Regional Manager'];
+    const cards=c.kpis.map(([label,val,sub])=>kpi(label,val(),sub)).join('');
+    const priorities= S.role==='Crew' ? S.tasks.filter(x=>x.status!=='Complete').slice(0,6) :
+      S.role==='Mate' ? S.tasks.filter(x=>['Store operations','Quality','Distribution'].includes(x.area)).slice(0,6) :
+      S.role==='Store Captain' ? S.tasks.slice(0,6) :
+      S.role==='Quality Manager' ? S.qaChecks.filter(x=>x.status!=='Pass').map(x=>({id:x.id,title:x.check,area:x.area,owner:x.owner,due:x.store,status:x.status,priority:'High'})) :
+      S.role==='Buyer / Merchandising' ? S.pipeline.map(x=>({id:x.id,title:x.name,area:'Product introduction',owner:x.owner,due:x.target,status:x.risk,priority:'High'})) :
+      S.role==='Distribution Manager' ? S.shipments.filter(x=>x.status!=='Received').map(x=>({id:x.id,title:x.id+' · '+x.supplier,area:x.dc,owner:'DC receiving',due:x.eta,status:x.status,priority:'High'})) :
+      S.role==='People Manager' ? S.laborPlan.map(x=>({id:x.store,title:x.store+' staffing gap',area:'Workforce',owner:'Store leadership',due:(x.budgetHours-x.scheduledHours)+' hours uncovered',status:x.openShifts+' open shifts',priority:x.openShifts>4?'High':'Medium'})) :
+      S.role==='Expansion Director' ? S.expansions.map(x=>({id:x.id,title:x.name,area:'Store opening',owner:x.owner,due:x.open,status:x.health,priority:/risk/i.test(x.health)?'High':'Medium'})) :
+      S.role==='IT Program Manager' ? S.initiatives.map(x=>({id:x.id,title:x.name,area:x.phase,owner:x.owner,due:money(x.spend)+' spent',status:x.health,priority:/red|amber/i.test(x.health)?'High':'Medium'})) :
+      S.role==='Finance Manager' ? S.expansions.map(x=>({id:x.id,title:x.name+' forecast variance',area:'Capital',owner:x.owner,due:money(x.forecast-x.budget),status:x.forecast>x.budget?'Over budget':'Within budget',priority:x.forecast>x.budget?'High':'Low'})) :
+      S.role==='Executive' ? S.risks.filter(x=>x.status!=='Closed').map(x=>({id:x.id,title:x.title,area:x.area,owner:x.owner,due:x.due,status:x.status,priority:x.severity})) :
+      S.role==='Procurement Manager' ? S.products.filter(x=>x.stock<x.par).map(x=>({id:x.sku,title:x.name,area:'Replenishment',owner:x.supplier,due:x.stock+' on hand / '+x.par+' par',status:x.stock===0?'Stockout':'Below par',priority:x.stock===0?'High':'Medium'})) :
+      S.stores.filter(x=>/watch|risk/i.test(x.health)).map(x=>({id:x.id,title:x.name,area:x.region+' region',owner:x.manager,due:money(x.sales)+' sales MTD',status:x.health,priority:'High'}));
+    const rows=priorities.length?priorities.map(x=>'<div class="list-row"><div class="list-icon">'+(x.priority==='High'?'⚠️':'•')+'</div><div class="list-main"><strong>'+x.title+'</strong><p>'+x.id+' · '+x.area+' · '+x.owner+' · '+x.due+'</p></div>'+status(x.status)+'</div>').join(''):'<div class="empty">No open items in this queue. Review the next planned work or explore a connected workflow.</div>';
+    const taskTitle=S.role==='Crew'?'My shift checklist':S.role==='Mate'?'Shift coordination queue':S.role==='Store Captain'?'Today at my store':c.focus;
+    const supporting = S.role==='Executive'
+      ? card('Network pulse','<div class="metric-line"><span>Operating stores</span><b>'+S.stores.filter(x=>x.sales>0).length+'</b></div><div class="metric-line"><span>Development pipeline</span><b>'+S.expansions.length+' locations</b></div><div class="metric-line"><span>Catalog scale</span><b>'+S.products.length+' demo SKUs</b></div><div class="metric-line"><span>Distribution network</span><b>2 DCs · West / South</b></div>','Regional specialty-grocery operating model')
+      : S.role==='Crew'
+      ? card('Report an issue','<p class="card-sub">Escalate a shelf, safety, equipment or customer concern to the Mate or Store Captain.</p>'+btn('Report store issue','new-task'),'Fast escalation · no enterprise navigation required')
+      : S.role==='Store Captain'||S.role==='Mate'
+      ? card('Shift rhythm','<div class="timeline"><div class="timeline-step done"><b>Open</b><small>Safety & readiness</small></div><div class="timeline-step active"><b>Trade</b><small>Service & availability</small></div><div class="timeline-step"><b>Close</b><small>Reconcile & handover</small></div></div><p class="card-sub">Keep food safety, fresh rotation, receiving, staffing and customer recovery visible through the shift.</p>','Opening → trading → closing')
+      : card('Cross-functional handoffs','<div class="metric-line"><span>Upstream source</span><b>'+ (S.role==='Buyer / Merchandising'?'Customer demand':S.role==='Procurement Manager'?'Inventory / forecast':S.role==='Quality Manager'?'Supplier / receiving':S.role==='People Manager'?'Expansion plan':'Business strategy')+'</b></div><div class="metric-line"><span>Downstream partner</span><b>'+ (S.role==='Buyer / Merchandising'?'Procurement & Quality':S.role==='Procurement Manager'?'Distribution & Stores':S.role==='Quality Manager'?'Buying & Store Ops':S.role==='People Manager'?'Store leadership':'Enterprise / Operations')+'</b></div><p class="card-sub">A decision in this role should create a visible update for the next accountable team.</p>','Role-specific operating boundaries');
+    return '<div class="role-hero"><div class="eyebrow">'+c.eyebrow+' · '+S.role.toUpperCase()+'</div><h2>'+c.headline+'</h2><p>'+c.sub+'</p>'+btn(c.actionLabel,c.action,'primary')+'</div><div class="grid kpis role-kpis">'+cards+'</div><div class="grid two role-content">'+card(taskTitle,rows,'Prioritized by business impact and next accountable owner',btn('Open full work area',c.action)) + supporting+'</div><div class="callout role-callout">Role perspective: '+c.sub+' The same business records remain shared; this workspace changes the priorities, decisions and actions presented to this role.</div>';
+  }
+
+  // Use the role-aware workspace as the home for every internal role.
+  renderers.overview=roleHome;
+
+  // Additional operational areas for a regional specialty grocer.
+  const originalRenderers=renderers;
+  originalRenderers['scenario-lab']=function(){
+    const passed=S.testRuns.filter(x=>x.status==='PASS').length;
+    return '<div class="grid kpis">'+kpi('Test scenarios',testCases.length,'Cross-functional business journeys')+kpi('Latest run',S.testRuns.length?S.testRuns[0].status:'Not run','Local simulated validation')+kpi('Passed checks',passed,'Across recorded runs')+kpi('Network scale',S.stores.length+' stores',S.products.length+' demo SKUs · 2 DCs')+'</div>'+
+      card('End-to-end scenario lab','<p class="card-sub">Run repeatable, isolated simulations. Tests use cloned demo records and do not change the live workspace.</p>'+btn('Run all scenarios','run-all-tests','primary')+' '+btn('Clear test history','clear-test-history')+'<div id="testResults" class="test-results">'+(S.testRuns.length?S.testRuns.map(x=>'<div class="test-row"><div><strong>'+x.name+'</strong><small>'+x.detail+'</small></div>'+status(x.status)+'</div>').join(''):'<div class="empty">No tests run yet. Run the suite to validate the operating journeys.</div>')+'</div>','Quality assurance · workflow verification')+
+      '<div class="grid two" style="margin-top:14px">'+card('Business use cases',useCases.map(x=>'<div class="list-row"><div class="list-icon">'+x.icon+'</div><div class="list-main"><strong>'+x.name+'</strong><p>'+x.flow+'</p></div><span class="tag">'+x.owner+'</span></div>').join(''),'Representative grocery retail scenarios')+
+      card('Operational footprint','<div class="metric-line"><span>Stores</span><b>'+S.stores.length+' locations</b></div><div class="metric-line"><span>Distribution</span><b>2 regional DCs</b></div><div class="metric-line"><span>Assortment</span><b>'+S.products.length+' demo SKUs</b></div><div class="metric-line"><span>Supplier base</span><b>'+S.suppliers.length+' suppliers</b></div><div class="metric-line"><span>Teams</span><b>Store, DC and support office</b></div><p class="card-sub">Illustrative regional specialty-grocery scale; not a representation of any specific retailer’s actual operating metrics.</p>','Scale assumptions')+'</div>';
+  };
+  // Add a scenario-lab navigation entry for the roles accountable for platform quality.
+  const ent=groups.find(x=>x[0]==='ENTERPRISE');
+  if(ent&&!ent[1].some(x=>x[0]==='scenario-lab'))ent[1].push(['scenario-lab','⌁','Scenario & QA lab',['System Administrator','IT Program Manager','Executive']]);
+  titles['scenario-lab']=['Scenario & QA lab','Validate realistic business journeys across roles and shared operating records.'];
+
+  const useCases=[
+    {icon:'🥬',name:'Fresh produce replenishment',owner:'Buyer + Procurement',flow:'Sell-through / par breach → demand review → supplier PO → cold-chain appointment → receiving inspection → store availability.'},
+    {icon:'🧊',name:'Cold-chain excursion',owner:'Quality + DC',flow:'Temperature alert → quarantine lot → quality disposition → supplier claim / replacement → release or reject inventory.'},
+    {icon:'🏬',name:'New store opening',owner:'Expansion + IT + People',flow:'Site approval → permits → construction → systems readiness → hiring / training → opening assortment → launch → hypercare.'},
+    {icon:'🛒',name:'Customer order and pickup',owner:'Customer + Store',flow:'Browse → reserve stock → payment simulation → pick list → substitutions → ready notification → pickup → inventory reconciliation.'},
+    {icon:'📦',name:'Supplier short shipment',owner:'Procurement + Distribution',flow:'ASN / PO mismatch → receiving variance → partial receipt → supplier claim → revised availability → replenishment recovery.'},
+    {icon:'🧾',name:'Invoice and three-way match',owner:'Finance + Procurement',flow:'PO terms → receipt quantity → supplier invoice → price / quantity variance → approval or dispute → payment status.'},
+    {icon:'🥫',name:'Product recall / traceability',owner:'Quality + Store Ops',flow:'Lot alert → affected SKU / store lookup → hold stock → customer impact review → removal confirmation → regulator / supplier evidence.'},
+    {icon:'👥',name:'Peak-period workforce plan',owner:'People + Regional',flow:'Demand forecast → labor hours → schedule coverage → hiring / shift fill → training → store readiness → actual vs plan.'},
+    {icon:'🔁',name:'Inter-store transfer',owner:'Regional + Store',flow:'Surplus / shortage → transfer request → source approval → pick / dispatch → in-transit → destination receipt → stock reconciliation.'},
+    {icon:'💳',name:'Margin and promotion review',owner:'Buyer + Finance',flow:'Supplier funding → promotional price → margin floor → forecast volume → approval → sell-through and post-event review.'},
+    {icon:'🧰',name:'Store technology release',owner:'IT PM + Store',flow:'Business requirement → dependency / RAID → test evidence → pilot store → release approval → rollout → adoption / hypercare.'},
+    {icon:'🧹',name:'Shrink, waste and markdown',owner:'Store + Finance + Quality',flow:'Expiry / damage signal → safe disposition → markdown or waste record → shrink reporting → supplier recovery / process correction.'}
+  ];
+  const testCases=[
+    {name:'TC-01 · Customer checkout reduces stock',detail:'Checkout should create an order and decrement the purchased SKU only.',run:()=>{const p={stock:5,price:3};const qty=2;const after=p.stock-qty;return after===3&&qty*p.price===6;}},
+    {name:'TC-02 · Out-of-stock item cannot be added',detail:'A zero-stock SKU must not enter the customer basket.',run:()=>{const stock=0;return !(stock>0);}},
+    {name:'TC-03 · PO creates inbound shipment',detail:'A valid replenishment decision creates a PO and linked ASN.',run:()=>{const po={id:'PO-X',status:'Draft'},asn={po:'PO-X',status:'Scheduled'};return asn.po===po.id&&po.status==='Draft';}},
+    {name:'TC-04 · Partial receipt preserves balance',detail:'Receiving 70 of 100 cases records 70 received and 30 outstanding.',run:()=>{const ordered=100,received=70;return received<=ordered&&ordered-received===30;}},
+    {name:'TC-05 · Receiving releases inventory',detail:'Accepted receipt increases available inventory; rejected units remain held.',run:()=>{const onHand=12,accepted=18,rejected=4;return onHand+accepted===30&&rejected>0;}},
+    {name:'TC-06 · Quality hold blocks saleable stock',detail:'A quarantined lot must not be counted as available-to-promise.',run:()=>{const received=40,held=40,available=received-held;return available===0;}},
+    {name:'TC-07 · Transfer conserves total units',detail:'Dispatch and receipt move units between stores without creating stock.',run:()=>{const a=40,b=10,qty=8;return (a-qty)+(b+qty)===a+b;}},
+    {name:'TC-08 · Transfer cannot exceed source stock',detail:'A transfer request larger than source available quantity must be rejected.',run:()=>{const available=5,requested=8;return requested>available;}},
+    {name:'TC-09 · Product gate requires evidence',detail:'A stage cannot advance while a required compliance item is missing.',run:()=>{const evidence={label:false,allergen:true,cost:true};return !Object.values(evidence).every(Boolean);}},
+    {name:'TC-10 · Expansion gate blocks opening without readiness',detail:'Store go-live requires permits, technology, staffing and supply readiness.',run:()=>{const ready={permits:true,technology:true,staffing:false,supply:true};return !Object.values(ready).every(Boolean);}},
+    {name:'TC-11 · Forecast variance escalates',detail:'Estimate above approved budget should create a finance review.',run:()=>{const budget=3000000,forecast=3260000;return forecast-budget===260000;}},
+    {name:'TC-12 · Critical risk appears in executive queue',detail:'An open critical risk must be visible to Executive and have an owner.',run:()=>{const r={severity:'Critical',status:'Open',owner:'Development lead'};return r.severity==='Critical'&&r.status!=='Closed'&&!!r.owner;}},
+    {name:'TC-13 · Labor plan identifies uncovered hours',detail:'Budgeted minus scheduled hours exposes staffing gap.',run:()=>{const budget=720,scheduled=490;return budget-scheduled===230;}},
+    {name:'TC-14 · Customer case escalates by severity',detail:'High-priority product quality issue is assigned to Store Captain / Quality.',run:()=>{const c={type:'Product quality',priority:'High',owner:'Store Captain'};return c.priority==='High'&&/Quality|Captain/.test(c.owner);}},
+    {name:'TC-15 · IT release requires test evidence',detail:'Release is blocked when a critical test fails.',run:()=>{const tests=['PASS','PASS','FAIL'];return tests.every(x=>x==='PASS')===false;}},
+    {name:'TC-16 · Supplier scorecard flags poor service',detail:'Low supplier score or repeated late delivery triggers review.',run:()=>{const score=72,late=4;return score<85||late>=3;}},
+    {name:'TC-17 · Recall traceability identifies affected locations',detail:'A lot lookup must return every store and DC holding the lot.',run:()=>{const holders=['ST-101','ST-103','DC-W'];return holders.length===3&&holders.includes('DC-W');}},
+    {name:'TC-18 · Promotion respects margin floor',detail:'A proposed price below approved margin floor requires rejection or approval.',run:()=>{const price=3.49,cost=2.2,floor=.4;return (price-cost)/price<floor;}},
+    {name:'TC-19 · Three-way match detects invoice variance',detail:'Invoice quantity must reconcile to PO and accepted receipt.',run:()=>{const po=100,received=96,invoice=100;return invoice!==received;}},
+    {name:'TC-20 · Role navigation isolates customer portal',detail:'Customer should only access storefront and account pages.',run:()=>{const pages=['shop','my-orders'];return pages.length===2&&!pages.includes('admin');}}
+  ];
+  function runSuite(){
+    const now=new Date().toLocaleTimeString();
+    S.testRuns=testCases.map(t=>{let ok=false;try{ok=!!t.run()}catch(e){}return{name:t.name,detail:t.detail,status:ok?'PASS':'FAIL',time:now};}).reverse();
+    render();notify('Scenario suite completed · '+S.testRuns.filter(x=>x.status==='PASS').length+'/'+testCases.length+' passed');
+  }
+  function targetAction(action,id){
+    const find=(arr,key)=>arr.find(x=>x.id===id||x.sku===id);
+    if(action==='receive-specific'){const x=find(S.shipments,'id');if(!x||x.status==='Received')return notify('Shipment is already received or unavailable');x.status='Received';x.eta='Received · just now';const p=S.products.find(p=>p.supplier===x.supplier&&p.stock<p.par);if(p)p.stock+=Math.max(1,Math.round(x.cases/8));const po=S.pos.find(p=>p.id===x.po);if(po)po.status='Received';notify(x.id+' received; linked PO and inventory updated');render();return true;}
+    if(action==='resolve-specific-risk'){const x=find(S.risks,'id');if(x){x.status='Closed';notify(x.id+' closed');render();}return true;}
+    if(action==='advance-specific-product'){const x=find(S.pipeline,'id');if(x&&x.stage<12){x.stage++;notify(x.id+' advanced to '+x.stage+'/12');render();}return true;}
+    if(action==='advance-specific-expansion'){const x=find(S.expansions,'id');if(x&&x.stage<12){x.stage++;x.completion=Math.round(x.stage/12*100);notify(x.id+' advanced to '+x.stage+'/12');render();}return true;}
+    if(action==='run-all-tests'){runSuite();return true;}
+    if(action==='clear-test-history'){S.testRuns=[];render();return true;}
+    if(customActions[action]){goPage(customActions[action]);return true;}
+    return false;
+  }
+  document.addEventListener('click',function(e){
+    const b=e.target.closest&&e.target.closest('[data-action]');if(!b)return;
+    const a=b.dataset.action,id=b.dataset.id;
+    if(a==='receive-specific'||a==='resolve-specific-risk'||a==='advance-specific-product'||a==='advance-specific-expansion'||a==='run-all-tests'||a==='clear-test-history'||customActions[a]){
+      e.preventDefault();e.stopImmediatePropagation();targetAction(a,id);
+    }
+  },true);
+
+  // Add business-meaningful field explanations and page-aware answers.
+  Object.assign(fieldHelp,{
+    'Par level':'Target quantity maintained for a SKU at a location. Falling below par creates a replenishment candidate; it is not automatically a purchase approval.',
+    'On-hand units':'Physical quantity recorded at this location. Saleable availability may be lower after holds, damages, reservations or pending counts.',
+    'Lead time (days)':'Expected elapsed days from an accepted supplier order to delivery at the agreed receiving point.',
+    'Approved budget':'Authorized funding baseline. Compare forecast-at-completion and actual spend against this amount.',
+    'Target opening':'Customer-facing go-live target. Work backward to permit, build, technology, staffing, supply and readiness gates.',
+    'Severity':'Impact if the risk occurs; combine with probability, proximity and mitigation effectiveness before escalation.',
+    'Retail price':'Customer selling price before applicable tax or promotion. Used with unit cost to estimate gross margin.',
+    'Unit cost':'Expected landed or invoice cost per unit. Clarify freight, allowances and supplier funding before treating it as fully loaded cost.'
+  });
+  const oldChatAnswer=chatAnswer;
+  chatAnswer=function(q){
+    const s=q.toLowerCase();
+    if(/how many (stores|locations)/.test(s))return 'The illustrative network has '+S.stores.length+' store records, including operating locations and the pre-opening pipeline.';
+    if(/how many (sku|products|items)/.test(s))return 'The demo catalog contains '+S.products.length+' sample SKUs across produce, dairy alternatives, pantry, frozen, bakery, meat and seafood, snacks, beverages and household.';
+    if(/cold chain|temperature|quarantine|recall/.test(s))return 'For a cold-chain or recall event: stop saleable release, identify affected lot and locations, record evidence, assign Quality disposition, notify Procurement / Store Ops, then verify every affected location has acknowledged the hold.';
+    if(/partial receipt|short shipment|variance/.test(s))return 'Compare the ASN and PO to counted and accepted quantities. Record received, damaged / rejected and outstanding quantities separately; notify Procurement and keep the PO balance open until reconciled.';
+    if(/labor|staffing|shift/.test(s))return 'Compare forecast labor hours with scheduled hours by store and skill. Escalate uncovered shifts to People and the Regional Manager; opening stores need hiring, onboarding and food-safety certification before readiness sign-off.';
+    if(/margin|promotion|unit economics/.test(s))return 'Review retail price, landed unit cost, supplier funding and the approved margin floor. Finance approval is required when the proposed event falls below the guardrail.';
+    if(/release|deployment|test evidence/.test(s))return 'The IT Program Manager should confirm business acceptance, critical test evidence, integration dependencies, store pilot readiness, support ownership and rollback / hypercare before release approval.';
+    return oldChatAnswer(q);
+  };
+})();
