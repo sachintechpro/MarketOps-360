@@ -1029,14 +1029,14 @@ The separate **Run integrity checks** control validates current simulated busine
 
 ## Smart Action Receipts · RACI Messaging
 
-All 15 demo role experiences now share a **Messages & Handoffs** page. Successful self-service changes generate an on-screen **Action Receipt** showing the changed business record, the affected areas, and the RACI follow-up:
+All 15 demo role experiences now share **Messages & Handoffs** and a dedicated **My Work Queue** page. Each owner sees assigned RACI follow-ups there without waiting for a message or SMS. Successful self-service changes generate an on-screen **Action Receipt** showing the changed business record, the affected areas, and the RACI follow-up:
 
 - **R – Responsible:** Role expected to take the next action.
 - **A – Accountable:** Role responsible for oversight and completion.
 - **C – Consulted:** Roles that can provide input when needed.
 - **I – Informed:** Roles that may need status visibility.
 
-When a next action is required, a traceable handoff appears in the Responsible role's **Handoffs** tab. Completed workflows explicitly show **No follow-up required**.
+When a next action is required, a traceable handoff automatically appears in the Responsible role's **My Work Queue** and the **Handoffs** tab. The queue shows the originating record, next action, Responsible owner, Accountable role, status and due condition. Completing a linked business action supersedes the prior handoff and moves ownership to the next role; manual handoff closure requires evidence and is labeled distinctly from updating the underlying business record. The receipt also distinguishes **records updated/linked**, **relevant demo roles**, **in-app recipients actually messaged**, and **SMS drafts opened but not confirmed delivered**. Completed workflows explicitly show **Completed — no follow-up required**.
 
 Every action receipt offers two optional communications:
 
@@ -1046,3 +1046,12 @@ Every action receipt offers two optional communications:
 Open **Messages & Handoffs** from the sidebar to see **Inbox**, **Sent**, and **Handoffs**. Responsible owners can mark a follow-up complete with evidence. All information is simulated and persists in the current browser tab until the demo is reset or the tab session ends.
 
 **Safety and scope:** Role selection, access restrictions, and role inboxes are simulated, not real user authentication. These communications are **not** a production SMS gateway, email provider, or real employee-notification system. The existing QA & UAT defect register remains unchanged; its open defects are not automatically considered fixed.
+
+
+### Smart Action Receipt regression journeys
+
+- **Customer → Crew → Customer:** Place an order; Crew receives a traceable next action in My Work Queue. When Crew completes its picking task, that handoff is superseded by a Customer pickup confirmation. Confirmed pickup closes the workflow with no further action.
+- **Procurement → Distribution → Store Captain:** Confirm a supplier PO. Distribution receives a queued handoff with the scheduled ASN delivery. Receiving the linked shipment supersedes the PO handoff and assigns the next store-replenishment action to Store Captain.
+- **Any successful business change:** Review the on-screen receipt. No one is claimed to have been notified until **Send message** is used, and any **Send text** action prepares an external SMS draft without confirming delivery. Switch to the Responsible role and open My Work Queue to inspect the assigned action and its due information.
+
+QA regression checks cover all 15 queue pages and these linked workflows. The application remains a front-end simulation; it does not provide real authenticated multi-user assignments or an SMS delivery service.
