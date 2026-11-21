@@ -2,207 +2,797 @@
 
 **A connected regional specialty-grocery operating model — from customer experience to enterprise execution.**
 
-MarketOps 360 is an interactive demonstration of a regional specialty-grocery business with multiple store locations, regional distribution centers, a broad grocery and household assortment, supplier relationships, fresh-food controls and an enterprise support office. It connects customer experience, merchandising, suppliers, procurement, distribution, inventory, store operations, workforce, quality, finance, expansion and technology delivery through shared operating records. The operating footprint is illustrative and designed to represent the complexity of a growing mid-sized regional retailer, not the actual size or systems of any named company.
+MarketOps 360 is an interactive business simulation designed to show how a growing regional specialty-grocery retailer can operate as one connected business.
 
-## How to use the demo
+Rather than presenting isolated dashboards, the demo connects **product, merchandising, suppliers, procurement, distribution, receiving, inventory, stores, workforce, quality, customer service, finance, expansion and technology delivery** through shared business flows.
 
-Start on the **Overview** page and use the role selector to explore the experience from different perspectives. The demo is designed so that actions taken in one area can create visible consequences in other areas.
+The business content, scale assumptions and operating records are fictional and illustrative. The model is intentionally sized and structured to represent the complexity of a growing regional specialty-grocery operator with multiple stores, distribution capability and a few hundred represented employees.
 
-### 1. Choose a role
+---
 
-Use the role selector to switch between the available experiences:
+## 1. The Business Model
 
-- Executive
-- Buyer / Merchandising
-- Procurement Manager
-- Distribution Manager
-- Regional Manager
-- Store Captain
-- Mate
-- Crew
-- Finance Manager
-- Quality Manager
-- IT Program Manager
-- Expansion Director
-- People Manager
-- System Administrator
+The simulated company operates a regional network of specialty-grocery stores supported by:
+
+- Multiple retail stores
+- Regional distribution centers
+- Buyers and merchandising teams
+- Supplier relationships
+- Fresh and prepared-food operations
+- Store operations teams
+- Workforce planning
+- Quality and food-safety controls
+- Finance and commercial governance
+- Technology delivery
+- New-store expansion
+- Customer service and digital commerce
+
+The central idea is simple:
+
+> **A decision made in one part of the business should create the appropriate operational consequence in another part of the business.**
+
+For example:
+
+**Customer demand → inventory signal → buying decision → purchase order → supplier → distribution → receiving → inventory → store availability → customer experience → financial result**
+
+That connected flow is the core of MarketOps 360.
+
+---
+
+# 2. Operating Footprint
+
+The demonstration currently represents an illustrative regional operator with approximately:
+
+- **8 stores**
+- **2 regional distribution centers**
+- **30 representative SKUs**
+- **12 supplier relationships**
+- **A few hundred represented employees across business functions**
+- Grocery and household categories including:
+  - Produce
+  - Dairy & alternatives
+  - Pantry
+  - Frozen
+  - Bakery
+  - Meat & seafood
+  - Snacks
+  - Beverages
+  - Household
+
+Example fictional products include produce, dairy alternatives, prepared foods, seafood, bakery items, beverages and household products.
+
+Example fictional locations include Pasadena, Ventura, Silver Lake and Costa Mesa.
+
+These are demonstration assumptions only and do not represent the actual footprint, systems, suppliers or economics of any real retailer.
+
+---
+
+# 3. Business Functions
+
+MarketOps 360 represents the following operating functions.
+
+## Executive
+
+Focuses on the overall operating picture:
+
+- Network sales
+- Store performance
+- Critical decisions
+- Capital exposure
+- Major risks
+- Expansion
+- Technology investment
+- Business priorities
+
+The executive view is intended to answer:
+
+> **Where does leadership need to make a decision or intervene?**
+
+---
+
+## Buyer / Merchandising
+
+Owns the commercial product lifecycle:
+
+- Product discovery
+- Supplier evaluation
+- Samples
+- Quality considerations
+- Cost
+- Retail pricing
+- Margin
+- Assortment
+- Product introduction
+- Performance monitoring
+- Continue / revise / exit decisions
+
+The buyer view answers:
+
+> **What should we sell, where should we sell it, and is it performing well enough to continue?**
+
+---
+
+## Procurement Manager
+
+Focuses on converting demand into supply:
+
+- Replenishment needs
+- Supplier selection
+- Purchase orders
+- Supplier performance
+- Open orders
+- Inbound activity
+- Short shipments
+- Order balance
+- Procurement exceptions
+
+The procurement view answers:
+
+> **What do we need to buy, from whom, when, and under what conditions?**
+
+---
+
+## Distribution Manager
+
+Owns the movement of product through the distribution network:
+
+- Distribution centers
+- Inbound shipments
+- Appointments
+- Capacity
+- Receiving flow
+- Shipment exceptions
+- Product movement
+- Operational bottlenecks
+
+The distribution view answers:
+
+> **Can the physical supply network move the required product where it needs to go?**
+
+---
+
+## Regional Manager
+
+Owns a group of stores:
+
+- Store performance
+- Stores on watch
+- Operational exceptions
+- Labor coverage
+- Store priorities
+- Customer issues
+- Regional execution
+
+The regional view answers:
+
+> **Which stores need attention, and what intervention is required?**
+
+---
+
+## Store Captain
+
+Owns day-to-day store execution:
+
+- Opening readiness
+- Store tasks
+- Crew coverage
+- Receiving
+- Quality actions
+- Customer issues
+- Store conditions
+- Shift handover
+
+The Store Captain view answers:
+
+> **Is the store ready to operate safely, efficiently and consistently today?**
+
+---
+
+## Mate
+
+Supports store leadership and shift execution:
+
+- Shift tasks
+- Urgent work
+- Receiving
+- Quality actions
+- Crew coordination
+- Operational follow-up
+
+---
+
+## Crew
+
+Focuses on frontline execution:
+
+- Assigned tasks
+- Quality alerts
+- Customer cases
+- Store activities
+- Shift handover
+
+The frontline experience intentionally focuses on **what needs to be done now**, rather than enterprise-level reporting.
+
+---
+
+## Finance Manager
+
+Connects operations to economics:
+
+- Sales
+- Store economics
+- Expansion forecasts
+- Budget exposure
+- Supplier terms
+- Financial variance
+- Commercial decisions
+
+The finance view answers:
+
+> **What is the financial consequence of the operating decision?**
+
+---
+
+## Quality Manager
+
+Owns product and operational quality:
+
+- Quality checks
+- Supplier reviews
+- Receiving exceptions
+- Food-safety activities
+- Quality holds
+- Customer quality cases
+- Recall traceability
+
+The quality view answers:
+
+> **Can this product or process safely proceed to the next stage?**
+
+---
+
+## IT Program Manager
+
+Connects technology delivery to business outcomes:
+
+- Initiatives
+- Delivery health
+- Risks
+- Dependencies
+- Release readiness
+- Testing
+- Investment
+- Value realization
+
+The IT view answers:
+
+> **Are technology initiatives delivering the business capability when needed?**
+
+---
+
+## Expansion Director
+
+Owns the new-store lifecycle:
+
+- Location assessment
+- Site evaluation
+- Business approval
+- Lease/legal
+- Permits
+- Construction
+- Technology
+- Facilities
+- Supply readiness
+- Workforce readiness
+- Store readiness
+- Launch
+- Stabilization
+
+The expansion view answers:
+
+> **Is the new location actually ready to open, or are we carrying unresolved risk?**
+
+---
+
+## People Manager
+
+Focuses on organizational readiness:
+
+- Workforce planning
+- Open roles
+- Coverage
+- Training
+- New-store staffing
+- Opening-team readiness
+- Workforce capacity
+
+The people view answers:
+
+> **Do we have the right people, skills and coverage to support the operation?**
+
+---
+
+## System Administrator
+
+Maintains the operating model's administrative structure:
+
+- Roles
+- Locations
+- Catalog records
+- Reference data
+- System configuration
+- Test scenarios
+
+The administrator view answers:
+
+> **Is the operating environment correctly configured for the business?**
+
+---
+
+## Customer
+
+Represents the external customer experience:
+
+- Browse products
+- Product details
+- Basket
+- Checkout
+- Orders
+- Customer service
+
+The customer experience is intentionally separated from internal business functions.
+
+---
+
+# 4. Connected Business Architecture
+
+MarketOps 360 is organized around several connected domains.
+
+### Command
+
+- Overview
+- Stores
+- Analytics
+
+### Product & Commercial
+
+- Product Pipeline
+- Catalog
+- Assortment
+- Promotions
+
+### Supply Chain
+
+- Suppliers
+- Procurement
+- Purchase Orders
+- Distribution
+- Receiving
+- Inventory
+- Transfers
+
+### Store Operations
+
+- Store Ops
+- Workforce
+- Quality
 - Customer
 
-Internal roles now receive role-focused home workspaces: executives see decisions and capital exposure; buyers see product and margin signals; procurement sees replenishment; DC leaders see inbound flow; regional leaders see store exceptions; store leaders and crew see shift work; and enterprise functions see their respective governance queues.
+### Enterprise
 
-Each role presents the information, priorities and actions most relevant to that responsibility.
+- Expansion
+- Finance
+- IT Portfolio
+- Risks
+- Reports
+- Admin
 
-### 2. Explore the main areas
+### Customer Portal
 
-**Command**
-- **Overview** — enterprise operating picture, priorities and connected activity.
-- **Stores** — store-level performance and operating visibility.
-- **Analytics** — business and operational trends.
+- Shop
+- My Orders
 
-**Product & Commercial**
-- **Product Pipeline** — follow a new product from idea through launch and lifecycle decision.
-- **Catalog** — review product and SKU information.
-- **Assortment** — understand where products are intended to be offered.
-- **Promotions** — review commercial activity and pricing decisions.
+The navigation is intentionally organized around business responsibilities rather than technical modules.
 
-**Supply Chain**
-- **Suppliers** — supplier onboarding and performance.
-- **Procurement** — buying decisions and demand signals.
-- **Purchase Orders** — create and manage purchase orders.
-- **Distribution** — distribution-center activity and inbound flow.
-- **Receiving** — inspect and receive inbound shipments.
-- **Inventory** — monitor stock, replenishment and availability.
-- **Transfers** — move inventory between locations.
+---
 
-**Store Operations**
-- **Store Ops** — daily store execution and operating controls.
-- **Workforce** — staffing and coverage.
-- **Quality** — quality, safety and compliance activities.
-- **Customer** — customer-service activity and exceptions.
+# 5. Core Business Journeys
 
-**Enterprise**
-- **Expansion** — manage the lifecycle of a new store opening.
-- **Finance** — financial visibility and store economics.
-- **IT Portfolio** — manage initiatives, delivery health and value realization.
-- **Risks** — review risks, issues, dependencies and decisions.
-- **Reports** — management reporting.
-- **Admin** — administrative controls and reference information.
+## Journey A — New Product Introduction
 
-**Customer**
-- **Shop** — browse products and simulate a customer purchase.
-- **My Orders** — review customer orders.
-
-## Recommended demo journeys
-
-### Journey 1 — Introduce a new product
-
-Use **Product Pipeline** to follow the product lifecycle:
+A new product follows a controlled lifecycle:
 
 1. Supplier discovery
 2. Supplier submission
-3. Samples / evaluation
+3. Sample evaluation
 4. Quality and compliance review
-5. Cost and pricing
-6. Business approval
-7. SKU / barcode creation
-8. Assortment
-9. Initial purchase order
-10. Receiving and launch
-11. Performance monitoring
-12. Continue, revise or exit
+5. Cost evaluation
+6. Retail pricing
+7. Business approval
+8. SKU / barcode creation
+9. Assortment decision
+10. Initial purchase order
+11. Receiving and launch
+12. Performance monitoring
+13. Continue, revise or exit
 
-This demonstrates how merchandising, suppliers, quality, procurement, distribution and store availability are connected.
+This connects:
 
-### Journey 2 — Follow procurement into store availability
+**Buyer → Supplier → Quality → Procurement → Distribution → Receiving → Inventory → Store → Customer → Finance**
 
-Start with **Procurement** and follow the operational chain:
+---
 
-**Demand signal → buying decision → purchase order → supplier confirmation → distribution appointment → receiving and inspection → inventory release → allocation → store receipt → availability and replenishment**
+## Journey B — Procurement to Store Availability
 
-Use **Purchase Orders**, **Distribution**, **Receiving** and **Inventory** to see how each stage supports the next.
+A replenishment requirement moves through the supply chain:
 
-### Journey 3 — Manage inventory and replenishment
+**Demand signal**  
+↓  
+**Buying decision**  
+↓  
+**Purchase order**  
+↓  
+**Supplier confirmation**  
+↓  
+**Distribution appointment**  
+↓  
+**Receiving and inspection**  
+↓  
+**Inventory release**  
+↓  
+**Allocation / movement**  
+↓  
+**Store receipt**  
+↓  
+**Customer availability**
 
-Open **Inventory** to review:
+The important concept is that procurement is not treated as an isolated purchasing screen.
 
-- On-hand inventory
+A purchase order creates downstream operational work.
+
+---
+
+## Journey C — Inventory Replenishment
+
+Inventory management considers:
+
+- On-hand units
 - Par levels
 - Replenishment needs
-- Item availability
+- Availability
 - Inventory adjustments
+- Transfers
+- Receiving
+- Quality holds
+- Customer consumption
 
-Use the available actions to see how inventory activity can affect the broader operating picture.
+The operating question is:
 
-### Journey 4 — Open a new store
+> **Do we have the right amount of saleable product in the right location at the right time?**
 
-Use **Expansion** to walk through the 12-stage expansion lifecycle:
+---
 
-**Market assessment → site evaluation → business approval → lease/legal → permits → construction → technology/facilities → supply readiness → workforce readiness → store readiness → launch → stabilization/hypercare**
+## Journey D — New Store Opening
 
-This demonstrates stage-gate management, readiness tracking, budget awareness, dependencies, risks and launch governance.
+Expansion follows a 12-stage lifecycle:
 
-### Journey 5 — Explore technology delivery
+1. Market assessment
+2. Site evaluation
+3. Business approval
+4. Lease / legal
+5. Permits
+6. Construction
+7. Technology / facilities
+8. Supply readiness
+9. Workforce readiness
+10. Store readiness
+11. Launch
+12. Stabilization / hypercare
 
-Use **IT Portfolio** to see how technology initiatives connect to business outcomes.
+The opening process brings together:
 
-Then explore **Risks** and **Reports** to understand:
+**Expansion + Finance + IT + People + Procurement + Distribution + Store Operations + Quality**
 
-- Initiative health
-- Delivery priorities
-- Dependencies
-- Risks and issues
-- Decisions
-- Release readiness
-- Governance
-- Value realization
+A store should not simply become "open" because construction is complete.
 
-### Journey 6 — Experience the customer side
+The operating model considers readiness across multiple dimensions.
 
-Switch to the **Customer** role and open **Shop**.
+---
 
-You can:
+## Journey E — Technology Delivery
 
-1. Browse products.
-2. Review product details.
-3. Add items to the basket.
-4. Complete a simulated checkout.
-5. Open **My Orders** to review the resulting order.
+Technology initiatives are treated as business capabilities rather than isolated IT projects.
 
-The customer journey is connected to the shared demonstration inventory model.
+The flow includes:
 
-## Connected actions
+**Business need → initiative → investment → delivery → dependencies → testing → release readiness → rollout → hypercare → value realization**
 
-The demo is designed around cause-and-effect rather than isolated screens.
+The IT Program Manager works with business stakeholders, risks, quality and leadership to determine whether a capability is actually ready.
 
-Examples:
+---
 
-- A customer purchase affects available inventory.
-- A purchase order creates an inbound supply activity.
-- Receiving a shipment updates inventory and purchase-order status.
-- Inventory activity can create replenishment signals.
-- Product lifecycle progression can make a product available for downstream commercial activity.
-- Store expansion progression eventually results in a new store becoming part of the operating model.
-- Transfer actions update the movement of inventory between locations.
+## Journey F — Customer Purchase
 
-These connections demonstrate how different business functions can operate from a common flow of information.
+The customer journey is:
 
-## Scenario & QA lab
+1. Browse
+2. Select product
+3. Add to basket
+4. Checkout
+5. Create order
+6. Update inventory
+7. Review order
 
-The **Scenario & QA Lab** is available to Executive, IT Program Manager and System Administrator roles. It contains repeatable, isolated validation scenarios and business use cases spanning the operating model. Run the suite to check core business rules without mutating the live demonstration records. The current suite covers customer stock decrement, out-of-stock prevention, PO-to-ASN linkage, partial receiving, inventory release, quality holds, transfer conservation, transfer quantity validation, product and expansion gate prerequisites, financial variance, executive risk visibility, labor gaps, customer issue escalation, IT release evidence, supplier scorecards, recall traceability, promotion margin floors, invoice matching and customer portal navigation.
+This provides a direct connection between the external customer experience and the internal inventory model.
 
-### Additional business use cases
+---
 
-- Fresh produce replenishment and supplier capacity
-- Cold-chain excursion, quarantine and quality disposition
-- New store opening across permits, technology, staffing and initial inventory
-- Customer order, pickup, substitution and stock reconciliation
-- Supplier short shipment and PO balance reconciliation
-- Invoice / PO / receipt three-way match
-- Product recall, lot traceability and store/DC hold confirmation
-- Peak-period labor planning and opening-team readiness
-- Store-to-store transfer and stock conservation
-- Promotion funding, price and margin-floor approval
-- Store technology release, pilot, rollout and hypercare
-- Shrink, waste, expiry and markdown controls
+# 6. Cross-Functional Cause and Effect
 
-The QA lab is a front-end simulation of business rules, not a production integration or security test harness.
+The most important characteristic of the simulation is that actions are not intended to remain isolated.
 
-## Context-aware guidance
+Examples include:
 
-The **MarketOps Guide** chatbox is available throughout the experience.
+### Customer purchase
 
-It is designed to understand the page and role currently being viewed and can explain:
+Customer checkout  
+→ order created  
+→ shared inventory decreases  
+→ availability changes
 
-- What the page is for
-- What a field means
-- What a metric represents
-- What the current workflow is
-- What the next step should be
-- Which role typically owns an activity
-- How risks or exceptions affect the flow
-- How a page connects to the broader operating model
+### Purchase order
 
-You can ask questions in plain language, such as:
+PO created  
+→ inbound shipment created  
+→ distribution activity appears  
+→ receiving can act on the shipment
+
+### Receiving
+
+Shipment received  
+→ PO status changes  
+→ accepted inventory becomes available  
+→ downstream replenishment / store activity can change
+
+### Transfer
+
+Transfer created  
+→ source inventory decreases  
+→ destination inventory increases  
+→ movement is recorded
+
+### Product introduction
+
+Product progresses through its lifecycle  
+→ downstream commercial activity becomes possible  
+→ launch readiness changes
+
+### Store expansion
+
+Expansion progresses through readiness stages  
+→ opening status changes  
+→ new store becomes part of the operating model
+
+The purpose is not to reproduce a production ERP. The purpose is to demonstrate how an integrated operating model can be represented digitally.
+
+---
+
+# 7. Business Exceptions
+
+A realistic operating model must handle exceptions, not only happy paths.
+
+MarketOps 360 includes scenarios such as:
+
+- Out-of-stock conditions
+- Supplier short shipments
+- Partial receiving
+- Quality holds
+- Cold-chain excursions
+- Product recalls
+- Poor supplier performance
+- Inventory transfer limits
+- Labor coverage gaps
+- Financial variance
+- Customer escalations
+- Technology release risks
+- Expansion readiness gaps
+- Promotion margin violations
+- Invoice / PO / receipt mismatches
+- Shrink and waste
+- Expiry and markdown controls
+
+The objective is to demonstrate:
+
+> **What happens when the normal process does not go according to plan?**
+
+---
+
+# 8. Scenario & QA Lab
+
+The **Scenario & QA Lab** provides repeatable business-rule validation.
+
+It is available to:
+
+- Executive
+- IT Program Manager
+- System Administrator
+
+The current validation suite contains **20 isolated scenarios**.
+
+### Core scenarios
+
+1. Customer checkout reduces stock
+2. Out-of-stock item cannot be added
+3. PO creates inbound shipment
+4. Partial receipt preserves remaining balance
+5. Receiving releases inventory
+6. Quality hold blocks saleable stock
+7. Transfer conserves total units
+8. Transfer cannot exceed source stock
+9. Product gate requires evidence
+10. Expansion gate blocks opening without readiness
+11. Forecast variance escalates
+12. Critical risk appears in executive queue
+13. Labor plan identifies uncovered hours
+14. Customer case escalates by severity
+15. IT release requires test evidence
+16. Supplier scorecard flags poor service
+17. Recall traceability identifies affected locations
+18. Promotion respects margin floor
+19. Three-way match detects invoice variance
+20. Role navigation isolates the customer portal
+
+The scenarios are deterministic and isolated so they can be repeatedly executed without corrupting the live demonstration data.
+
+### Important distinction
+
+The Scenario & QA Lab is a **front-end business-rule simulation**.
+
+It is not being represented as:
+
+- Production integration testing
+- Browser automation
+- Security testing
+- Performance testing
+- Real payment processing
+- Real ERP integration
+- Real supplier integration
+
+That distinction keeps the demonstration technically honest.
+
+---
+
+# 9. Additional Business Use Cases
+
+The operating model also represents broader business situations.
+
+### Fresh Produce Replenishment
+
+Demand increases → inventory approaches par → buyer reviews requirement → supplier capacity is checked → PO is created → distribution receives product → store availability is restored.
+
+### Cold-Chain Excursion
+
+Shipment arrives → temperature exception identified → product quarantined → quality disposition required → affected inventory remains unavailable until decision.
+
+### New Store Opening
+
+Expansion project → permits → construction → technology → staffing → initial inventory → readiness review → launch → hypercare.
+
+### Customer Order
+
+Customer places order → inventory is consumed → order is created → store / fulfillment activity follows → customer receives the result.
+
+### Supplier Short Shipment
+
+PO expected quantity differs from received quantity → receiving records variance → PO balance remains open → procurement follows up with supplier.
+
+### Three-Way Match
+
+Purchase order  
++ receipt  
++ invoice  
+→ financial reconciliation.
+
+A mismatch creates an exception rather than silently passing through.
+
+### Product Recall
+
+Recall initiated → affected product / lot identified → locations identified → inventory held → store/DC action required → traceability maintained.
+
+### Peak Workforce Planning
+
+Demand forecast → labor requirement → coverage analysis → uncovered hours → staffing action.
+
+### Store-to-Store Transfer
+
+Source inventory checked → transfer requested → quantity validated → source reduced → destination increased → movement recorded.
+
+### Promotion Governance
+
+Promotion proposal → funding / pricing review → margin check → approval or rejection.
+
+### Technology Release
+
+Initiative → build → testing → readiness review → release → hypercare → value measurement.
+
+### Shrink / Waste / Expiry
+
+Inventory exposure → operational review → waste / markdown decision → financial impact → corrective action.
+
+---
+
+# 10. Role-Based Decision Support
+
+Each internal role receives a different operating perspective.
+
+The goal is not merely to change the title at the top of a dashboard.
+
+The information hierarchy changes based on responsibility.
+
+For example:
+
+**Executive**  
+Focuses on decisions, exposure and business outcomes.
+
+**Buyer**  
+Focuses on assortment, product performance and supplier/product decisions.
+
+**Procurement**  
+Focuses on replenishment, purchase orders and supplier execution.
+
+**Distribution**  
+Focuses on physical flow and capacity.
+
+**Regional Manager**  
+Focuses on store exceptions and regional execution.
+
+**Store Captain**  
+Focuses on today's operating readiness.
+
+**Crew**  
+Focuses on assigned frontline work.
+
+**Finance**  
+Focuses on economics and variance.
+
+**Quality**  
+Focuses on product safety and disposition.
+
+**IT Program Manager**  
+Focuses on delivery health and business capability.
+
+**Expansion Director**  
+Focuses on opening readiness and capital exposure.
+
+**People Manager**  
+Focuses on workforce capacity and readiness.
+
+This demonstrates the principle:
+
+> **The same business should look different depending on the decision responsibility of the person using it.**
+
+---
+
+# 11. MarketOps Guide
+
+The **MarketOps Guide** is available throughout the experience.
+
+It provides context-aware explanations based on the current page and role.
+
+It can explain:
+
+- Page purpose
+- Field meaning
+- KPI meaning
+- Workflow
+- Next action
+- Role ownership
+- Risks
+- Exceptions
+- Business dependencies
+- Connections to other areas
+
+Example questions:
 
 - "What is this page for?"
 - "What should I do next?"
@@ -213,43 +803,186 @@ You can ask questions in plain language, such as:
 - "How does this connect to inventory?"
 - "What are the main risks here?"
 
-### Field tooltips
+The guidance is deterministic and local to the demonstration. It is not presented as a production AI assistant.
 
-Hover over fields, metrics, status indicators, table headers and other highlighted elements to see concise explanations.
+---
 
-The tooltips are intended to make the demo understandable without requiring prior knowledge of retail operations.
+# 12. Business Document View
 
-## Suggested executive walkthrough
+MarketOps 360 can also be understood as a **business operating-model document implemented as an interactive application**.
 
-For a short portfolio demonstration, use this sequence:
+The application expresses:
 
-**Overview → Product Pipeline → Procurement → Purchase Orders → Receiving → Inventory → Store Ops → Expansion → IT Portfolio → Risks → Customer Shop**
+### Business objectives
 
-This gives a complete view of the operating model from strategic planning through execution and customer experience.
+Maintain product availability, operational efficiency, quality, customer satisfaction, financial discipline and controlled growth.
 
-## What this demo demonstrates
+### Operating capabilities
 
-MarketOps 360 is intended to demonstrate practical capabilities in:
+Product management, procurement, supply chain, store operations, workforce, quality, finance, technology and expansion.
 
-- Business and operational requirements analysis
-- Enterprise process design
-- Retail operating-model understanding
+### Business processes
+
+Product introduction, replenishment, purchasing, receiving, inventory movement, store execution, customer service, technology delivery and expansion.
+
+### Decision points
+
+Buy / don't buy, approve / reject, release / hold, open / delay, promote / reject, release / defer.
+
+### Exceptions
+
+Short shipment, quality failure, stock shortage, labor gap, financial variance, recall, technology risk and readiness failure.
+
+### Governance
+
+Risks, issues, dependencies, approvals, readiness gates, financial controls and executive visibility.
+
+### Outcomes
+
+Product availability, store readiness, customer experience, financial performance and business growth.
+
+This makes the README useful not only as technical documentation, but also as a concise **business-analysis and operating-model artifact**.
+
+---
+
+# 13. Suggested Executive Walkthrough
+
+For a short demonstration, use:
+
+**Overview**  
+↓  
+**Product Pipeline**  
+↓  
+**Procurement**  
+↓  
+**Purchase Orders**  
+↓  
+**Distribution**  
+↓  
+**Receiving**  
+↓  
+**Inventory**  
+↓  
+**Store Ops**  
+↓  
+**Expansion**  
+↓  
+**IT Portfolio**  
+↓  
+**Risks**  
+↓  
+**Customer Shop**
+
+This sequence demonstrates the business from:
+
+**strategy → product → supply → operations → technology → customer**
+
+---
+
+# 14. What This Demonstrates
+
+MarketOps 360 demonstrates practical capabilities in:
+
+- Business analysis
+- Requirements analysis
+- Operating-model design
+- Process design
 - Cross-functional workflow design
-- Product and merchandising lifecycle management
-- Procurement and supply-chain processes
-- Inventory and store operations
-- Store expansion and readiness management
-- IT portfolio and program management
-- Risk, issue and dependency management
-- Role-based experience design
-- Executive and operational reporting
+- Retail business understanding
+- Product lifecycle management
+- Merchandising
+- Procurement
+- Supply-chain processes
+- Inventory management
+- Store operations
+- Workforce planning
+- Quality and compliance
+- New-store expansion
+- Financial governance
+- IT portfolio management
+- Program management
+- Risk and dependency management
+- Role-based UX
+- Executive reporting
 - Customer journey design
-- Connected UX and information architecture
+- Connected information architecture
+- Business-rule validation
 - Forward-deployment thinking
 - Translating business processes into usable digital experiences
 
-## Demo environment
+---
 
-All brands, locations, products, suppliers, employees, customers, metrics and financial values shown in the demo are fictional demonstration content. The scale assumptions are intended to represent a growing regional specialty-grocery operator with multiple stores, two regional distribution centers, a few hundred employees and a broad everyday assortment. They are not factual claims about any specific retailer.
+# 15. Demonstration Boundaries
 
-The experience is designed as a portfolio demonstration of an integrated retail operating model and is not affiliated with any real retailer.
+MarketOps 360 is a portfolio demonstration.
+
+It does **not** claim to be a production retail platform.
+
+The following are simulated:
+
+- Users
+- Roles
+- Locations
+- Products
+- Suppliers
+- Employees
+- Orders
+- Inventory
+- Financial values
+- Business metrics
+- Workflow records
+
+The application currently uses browser-based demonstration state rather than a production database and enterprise authentication architecture.
+
+There are no real:
+
+- Payments
+- Supplier integrations
+- ERP integrations
+- Warehouse integrations
+- POS integrations
+- Customer accounts
+- Production financial transactions
+
+The purpose is to demonstrate **business thinking, process connectivity, role-based experience design and operational decision support**.
+
+---
+
+# 16. Why MarketOps 360 Exists
+
+Many enterprise applications represent business functions as separate screens.
+
+Real businesses do not operate that way.
+
+A buyer's decision affects procurement.
+
+Procurement affects distribution.
+
+Distribution affects receiving.
+
+Receiving affects inventory.
+
+Inventory affects stores.
+
+Stores affect customers.
+
+Customers affect sales.
+
+Sales affect finance.
+
+Technology enables and changes many of those processes.
+
+MarketOps 360 was created to make those relationships visible and interactive.
+
+> **The objective is not to simulate every detail of a real retailer.  
+> The objective is to demonstrate how a complex business can be understood, connected and translated into a usable digital operating model.**
+
+---
+
+## Demo
+
+**Live application:** https://marketops-360.onrender.com
+
+**GitHub repository:** https://github.com/sachintechpro/MarketOps-360
+
+All content is fictional and intended for demonstration purposes.
