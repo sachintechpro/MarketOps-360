@@ -1,0 +1,10 @@
+{
+  "name": "marketops-360",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static enterprise retail demonstration; dependency-free quality gate",
+  "scripts": {
+    "test": "node tests/smoke.cjs",
+    "build": "node tests/smoke.cjs"
+  }
+}
