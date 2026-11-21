@@ -148,7 +148,7 @@ function config(type,record,detail,actor){
       set(null,'Quality Manager',null,null,[],['IT Program Manager'],['QA & UAT Bench']);
     else set('IT Program Manager','Quality Manager','Investigate failing or blocked UAT scenario','Next defect triage',['System Administrator'],['Executive'],['QA & UAT Bench']);break;
   case 'Handoff completed':
-    set(null,'Store Captain',null,null,[],[],['Follow-up Work Queue','Handoff History']);break;
+    set(null,actor,null,null,[],[],['Follow-up Work Queue','Handoff History']);break;
   case 'Admin configuration':
     set(null,'System Administrator',null,null,['IT Program Manager'],[],['System Rules']);break;
   case 'Report exported':
@@ -408,17 +408,17 @@ function textDraft(receipt){
   // User-initiated click opens the device composer; there is no external SMS API.
   const a=document.createElement('a');a.href=sms;a.rel='noopener';a.click();
   S.textDraftEvents=S.textDraftEvents||[];
-  S.textDraftEvents.unshift({record:receipt.record,role:S.role,at:now(),status:'Opened device SMS composer — delivery unverified'});
-  notify('SMS composer opened. No delivery confirmation is available.');
+  S.textDraftEvents.unshift({receiptId:receipt.id,record:receipt.record,role:S.role,at:now(),status:'Opened device SMS composer — delivery unverified'});
+  render();notify('SMS composer opened. No delivery confirmation is available.');
  });
 }
 function markHandoffDone(id){
  const h=S.handoffs.find(x=>x.id===id);
  if(!h||h.owner!==S.role||h.status!=='Open')return notify('Only the responsible role may complete this open handoff.');
- const fields=W.el('Completion evidence','evidence','Required follow-up completed and reviewed');
- W.dialog('Complete follow-up · '+h.record,fields,'Complete handoff',d=>{
+ const fields='<p class="card-sub">This records an external/manual follow-up. It does not modify the originating purchase order, shipment, store task or customer order. Use the business action to progress the workflow whenever possible.</p>'+W.el('Completion evidence','evidence','Explain the external action and verification performed');
+ W.dialog('Record follow-up · '+h.record,fields,'Record manual completion',d=>{
   if(!d.evidence.trim())return notify('Completion evidence is required.'),false;
-  h.status='Completed';h.evidence=d.evidence;h.updated=now();
+  h.status='Completed (manual evidence)';h.evidence=d.evidence;h.updated=now();
   // Handoff completion itself is a successful self-service action, with a closed receipt.
   W.audit('Handoff completed',h.record,h.action+' · '+d.evidence);
   render();notify('Handoff completed. No further step is assigned by this handoff.');
@@ -430,6 +430,7 @@ document.addEventListener('click',function(e){
  const a=b.dataset.commsAction;
  if(a==='dismiss'){S.commsDismissed=S.commsPending;document.querySelector?.('#marketops-action-receipt')?.remove?.();return;}
  if(a==='open-messages'){S.commsDismissed=S.commsPending;S.page='messages';render();return;}
+ if(a==='open-queue'){S.commsDismissed=S.commsPending;S.page='work-queue';render();return;}
  if(a==='message')return composeMessage(findReceipt(b.dataset.receipt));
  if(a==='text')return textDraft(findReceipt(b.dataset.receipt));
  if(a==='tab'){S.commsTab=b.dataset.tab;render();return;}
