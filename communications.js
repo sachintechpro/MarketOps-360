@@ -167,22 +167,29 @@ function onAudit(action,record,detail,actor){
  if(!action||!record)return null;
  const route=config(action,record,detail,actor);
  if(!route)return null;
+ const task=S.tasks.find(x=>x.id===record);
+ const shipment=S.shipments.find(x=>x.id===record);
+ const related=[String(record),task?.orderId,task?.caseId,shipment?.po].filter(Boolean).map(String);
+ const primary=task?.orderId||task?.caseId||String(record);
  const previous=S.actionReceipts[0];
- if(previous&&previous.action===action&&previous.record===record&&previous.detail===detail)return previous;
+ if(previous&&previous.action===action&&previous.sourceRecord===String(record)&&previous.detail===String(detail||''))return previous;
  const receipt={
   id:'RCPT-'+String(Date.now()).slice(-8)+'-'+(S.actionReceipts.length+1),
-  action,record:String(record),detail:String(detail||''),actor,at:now(),
-  ...route
+  action,record:primary,sourceRecord:String(record),relatedRecords:related,
+  detail:String(detail||''),actor,at:now(),...route
  };
+ // When the same workflow advances, the earlier open assignment must not remain
+ // outstanding. Superseded is not the same as completed; keep the audit trail.
+ S.handoffs.filter(x=>x.status==='Open'&&related.includes(String(x.record)))
+   .forEach(x=>{x.status='Superseded by '+action;x.updated=receipt.at;});
  S.actionReceipts.unshift(receipt);
  S.actionReceipts.length=Math.min(S.actionReceipts.length,120);
  if(route.r){
-  // An action completes previously assigned work for the same record and same responsible role.
-  S.handoffs.filter(x=>x.status==='Open'&&x.record===receipt.record&&x.owner===actor)
-   .forEach(x=>{x.status='Superseded by subsequent action';x.updated=receipt.at;});
-  S.handoffs.unshift({id:'HO-'+(1000+S.handoffs.length),receiptId:receipt.id,record:receipt.record,
-   owner:route.r,accountable:route.a,action:route.next,due:route.due,at:receipt.at,
-   status:'Open',createdBy:actor});
+  S.handoffs.unshift({
+   id:'HO-'+(1000+S.handoffs.length),receiptId:receipt.id,record:receipt.record,
+   sourceRecord:receipt.sourceRecord,owner:route.r,accountable:route.a,
+   action:route.next,due:route.due,at:receipt.at,status:'Open',createdBy:actor
+  });
  }
  S.commsPending=receipt.id;
  S.commsDismissed='';
