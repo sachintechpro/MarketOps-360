@@ -299,6 +299,69 @@ function commsPage(){
  '<section class="comms-help"><h3>Who receives what?</h3><p><strong>R — Responsible:</strong> Owns and acts on the next step. <strong>A — Accountable:</strong> Ensures completion. <strong>C — Consulted:</strong> Included when input is needed. <strong>I — Informed:</strong> Receives a status update only when selected.</p><p>Send message defaults to Responsible and Accountable; Consulted and Informed are optional. Completed workflows explicitly say no follow-up is required.</p></section></div>';
 }
 renderers.messages=commsPage;
+const workGroup=groups.find(g=>g[0]==='COMMUNICATION');
+if(workGroup&&!workGroup[1].some(x=>x[0]==='work-queue'))
+ workGroup[1].unshift(['work-queue','☑','My Work Queue',roles.slice()]);
+titles['work-queue']=['My Work Queue','Assigned RACI follow-ups and operational tasks for the selected role.'];
+pageHelp['work-queue']='The next Responsible role sees every follow-up here automatically, even before any optional in-app message or SMS is sent. The original business record, due, status and accountable owner remain linked.';
+
+function followUpList(compact){
+ const owned=S.handoffs.filter(x=>x.owner===S.role&&x.status==='Open');
+ if(!owned.length)return '<div class="comms-empty">No open RACI follow-ups for this role.</div>';
+ return owned.slice(0,compact?5:80).map(h=>
+  '<article class="comms-item comms-queue-item"><div><strong>'+E(h.record)+' · '+E(h.action)+'</strong>'+
+  '<small>Responsible: '+E(h.owner)+' · Accountable: '+E(h.accountable)+'</small>'+
+  '<small>Due: '+E(h.due)+' · Status: '+E(h.status)+'</small>'+
+  '<small>Assigned by '+E(h.createdBy)+' · '+E(h.at)+'</small></div>'+
+  '<div class="comms-item-actions"><button class="btn" data-comms-action="message" data-receipt="'+E(h.receiptId)+'">Send message</button>'+
+  '<button class="btn" data-comms-action="text" data-receipt="'+E(h.receiptId)+'">Send text…</button>'+
+  '<button class="btn" data-comms-action="handoff-done" data-handoff="'+E(h.id)+'">Record follow-up</button></div></article>').join('');
+}
+function queueTasks(){
+ const tasks=W.roleTasks?W.roleTasks():[];
+ if(S.role==='Customer')return '';
+ if(!tasks.length)return '<div class="comms-empty">No operational tasks assigned for this role.</div>';
+ return tasks.slice(0,30).map(t=>
+  '<article class="comms-item"><div><strong>'+E(t.id)+' · '+E(t.title)+'</strong>'+
+  '<small>'+E(t.area)+' · Owner: '+E(t.owner)+' · Due: '+E(t.due)+' · '+E(t.status)+'</small></div>'+
+  '<div class="comms-item-actions"><button class="btn" data-action="task-detail" data-id="'+E(t.id)+'">Update task</button></div></article>').join('');
+}
+function myWorkQueue(){
+ const own=S.handoffs.filter(h=>h.owner===S.role&&h.status==='Open');
+ const reviewed=S.handoffs.filter(h=>h.accountable===S.role&&h.status==='Open');
+ const tasks=W.roleTasks&&S.role!=='Customer'?W.roleTasks():[];
+ return '<div class="comms-page"><div class="grid kpis">'+
+ kpi('My RACI follow-ups',own.length,'Next steps assigned to this role')+
+ kpi('Accountable oversight',reviewed.length,'Cross-role actions requiring oversight')+
+ kpi('Operating tasks',tasks.length,'Existing assigned work')+
+ kpi('Recorded handoffs',S.handoffs.length,'Traceable session history')+'</div>'+
+ '<div class="comms-notice"><strong>'+E(S.role)+'</strong> owns these next steps. New RACI handoffs are recorded after successful business actions, without requiring a message to be sent. Completing the originating business action advances the workflow and supersedes the old assignment. Any manual completion requires recorded evidence.</div>'+
+ '<div class="comms-list"><h3>My next actions</h3>'+followUpList(false)+'</div>'+
+ '<div class="comms-list"><h3>My operating tasks</h3>'+queueTasks()+'</div>'+
+ '<div class="comms-list"><h3>Accountable oversight</h3>'+
+ (reviewed.length?reviewed.slice(0,15).map(h=>'<article class="comms-item"><div><strong>'+E(h.record)+' · '+E(h.action)+'</strong><small>Responsible: '+E(h.owner)+' · Due: '+E(h.due)+' · '+E(h.status)+'</small></div></article>').join(''):'<div class="comms-empty">No open handoffs awaiting your oversight.</div>')+
+ '</div></div>';
+}
+renderers['work-queue']=myWorkQueue;
+const previousOverview=renderers.overview;
+renderers.overview=function(){
+ const existing=previousOverview();
+ if(S.role==='Customer')return existing;
+ const count=S.handoffs.filter(h=>h.owner===S.role&&h.status==='Open').length;
+ return existing+'<div style="margin-top:14px">'+card('RACI follow-ups · My Work Queue',
+ '<p class="card-sub">'+count+' open follow-up'+(count===1?'':'s')+' assigned to '+E(S.role)+'. Business actions advance these handoffs automatically.</p>'+followUpList(true),
+ 'Accountable handoffs · Originating record, next owner and due',
+ '<button class="btn primary" data-page="work-queue">Open My Work Queue</button>')+'</div>';
+};
+const previousStoreOps=renderers['store-ops'];
+renderers['store-ops']=function(){
+ const existing=previousStoreOps();
+ const count=S.handoffs.filter(h=>h.owner===S.role&&h.status==='Open').length;
+ return existing+'<div style="margin-top:14px">'+card('RACI follow-ups · My Work Queue',
+ '<p class="card-sub">'+count+' open handoff'+(count===1?'':'s')+'.</p>'+followUpList(true),
+ 'Your next business actions',
+ '<button class="btn primary" data-page="work-queue">Open My Work Queue</button>')+'</div>';
+};
 function findReceipt(id){return S.actionReceipts.find(r=>r.id===id);}
 function composeMessage(receipt){
  if(!receipt)return notify('Action receipt unavailable.');
