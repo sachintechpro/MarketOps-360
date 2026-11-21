@@ -30,22 +30,3 @@
 .role-kpis .kpi{min-width:0}
 @media(min-width:1200px){.role-hero h2{font-size:28px}}
 @media(max-width:760px){.role-hero{padding:19px}.role-hero h2{font-size:22px}.test-row{align-items:flex-start}.test-row small{max-width:230px}}
-
-/* Sofia — accessible page-aware assistant */
-#contextChat .chat-launch{display:flex;align-items:center;gap:9px;width:auto;height:46px;padding:5px 15px 5px 6px;border-radius:28px;cursor:pointer;font:700 12px 'DM Sans',sans-serif}
-#contextChat .sofia-avatar{display:inline-grid;place-items:center;flex:none;width:32px;height:32px;border-radius:50%;background:#fff;color:#243b58;font-size:16px;font-weight:800}
-#contextChat .chat-head .sofia-avatar{background:#e7f0ff;color:#1d4776}
-#contextChat .sofia-identity{display:flex;align-items:center;gap:10px}
-#contextChat .chat-head b{font-size:15px}
-#contextChat .chat-head small{font-size:11px}
-#contextChat .chat-panel{height:min(520px,calc(100dvh - 110px));min-height:290px;bottom:58px}
-#contextChat .chat-body{min-height:0}
-#contextChat .chat-msg{font-size:13px;line-height:1.5;overflow-wrap:anywhere}
-#contextChat .chat-form{flex:none;align-items:stretch}
-#contextChat .chat-form input{font-size:14px;min-height:42px}
-#contextChat .chat-form button{font-size:12px;min-height:42px;cursor:pointer}
-#contextChat .sofia-prompts{display:flex;gap:6px;flex-wrap:wrap;padding:9px 12px 0;background:white}
-#contextChat .sofia-prompts button{padding:7px 10px;border:1px solid var(--line);background:#f7f9fc;color:var(--ink);border-radius:18px;font-size:11px;cursor:pointer}
-#contextChat .sofia-note{padding:0 12px 10px;background:white;color:var(--muted);font-size:10px}
-#contextChat button:focus-visible,#contextChat input:focus-visible{outline:2px solid #3b82f6;outline-offset:2px}
-@media(max-width:760px){#contextChat .chat-panel{width:min(390px,calc(100vw - 28px));height:min(520px,calc(100dvh - 95px));bottom:54px}#contextChat .chat-launch{height:44px}}
