@@ -201,7 +201,7 @@ renderers.procurement=function(){
  return html+'<div style="margin-top:14px">'+card('Purchase order self-service',table(['PO','SKU','Supplier','Status','Action'],rows),'Draft confirmation creates a linked inbound shipment for Distribution')+'</div>';
 };
 const originalReceiving=renderers.receiving;
-renderers.receiving=function(){return originalReceiving().replace(/Inspect (ASN-[^<]+)</g,'Inspect $1<').replace('Select the shipment being inspected. Real receiving should record accepted, rejected and short quantities separately.','Inspect a specific shipment to enter accepted, rejected and short units.');};
+renderers.receiving=function(){return originalReceiving().replace(/Inspect (ASN-[^<]+)</g,'Inspect $1<').replace('Select the shipment being inspected. Real receiving should record accepted, rejected and short quantities separately.','Inspect a specific shipment to enter accepted, rejected and short units.').replace(/status\(s.status\)/g,'status(s.status)');};
 renderers.customer=function(){
  return '<div class="grid kpis">'+kpi('Open cases',S.customerCases.filter(x=>x.status!=='Resolved').length,'Store service work')+kpi('High priority',S.customerCases.filter(x=>x.priority==='High'&&x.status!=='Resolved').length,'Require prompt response','warn')+kpi('Resolved',S.customerCases.filter(x=>x.status==='Resolved').length,'Completed responses')+kpi('Orders',S.orders.length,'Customer activity')+'</div>'+
  card('Customer service workbench',table(['Case','Reason','Store','Customer','Status','Action'],S.customerCases.map(c=>'<tr><td><strong>'+E(c.id)+'</strong></td><td>'+E(c.type)+'</td><td>'+E(c.store)+'</td><td>'+E(c.customer||'Store visitor')+'</td><td>'+status(c.status)+'</td><td>'+actionBtn('Open case','customer-case',c.id)+'</td></tr>')),'Cases created by customers and store staff are shared',btn('＋ Create case','new-case','primary'));
@@ -217,7 +217,8 @@ renderers.finance=function(){
  let html=oldFinance();
  html=html.replace('$483,600',money(totalSales())).replace('$8,600,000',money(S.expansions.reduce((a,x)=>a+x.budget,0))).replace('$8,700,000',money(S.expansions.reduce((a,x)=>a+x.forecast,0))).replace('$6,200,000',money(S.expansions.reduce((a,x)=>a+x.spent,0)));
  const rows=S.expansions.map(x=>'<tr><td><strong>'+E(x.id)+'</strong><br><small>'+E(x.name)+'</small></td><td>'+money(x.budget)+'</td><td>'+money(x.spent)+'</td><td>'+money(x.forecast)+'</td><td>'+money(x.forecast-x.budget)+'</td><td>'+actionBtn('Review','finance-review',x.id)+'</td></tr>');
- return html+'<div style="margin-top:14px">'+card('Capital forecast self-service',table(['Project','Budget','Spend','Forecast','Variance','Action'],rows),'Changes update Expansion and executive exposure; over-budget projects create an open RAID item')+'</div>';
+ const approvals=S.pos.filter(p=>p.status==='Pending financial approval').map(p=>'<tr><td><strong>'+E(p.id)+'</strong></td><td>'+E(p.supplier)+'</td><td>'+money(p.amount)+'</td><td>'+actionBtn('Approve / reject','po-detail',p.id)+'</td></tr>');
+ return html+'<div style="margin-top:14px">'+card('Capital forecast self-service',table(['Project','Budget','Spend','Forecast','Variance','Action'],rows),'Changes update Expansion and executive exposure; over-budget projects create an open RAID item')+'</div>'+'<div style="margin-top:14px">'+card('Purchase approvals',approvals.length?table(['PO','Supplier','Amount','Decision'],approvals):'<p class="card-sub">No orders are waiting for financial approval.</p>','Orders above the configured financial review threshold')+'</div>';
 };
 const originalWorkforce=renderers.workforce;
 renderers.workforce=function(){
@@ -273,7 +274,7 @@ renderers['scenario-lab']=function(){
  '<div style="margin-top:14px">'+card('Manual end-to-end acceptance journey','<p>1. Customer places an order → Crew receives a picking task.</p><p>2. Procurement drafts a PO → confirms it → Distribution receives a linked ASN.</p><p>3. Quality holds stock → Customer availability decreases → Quality releases it.</p><p>4. Store transfer dispatches stock → receiving location gains it.</p><p>5. Expansion functional owners approve individual stage gates.</p><p>6. Finance updates capital forecast → critical exposure appears in RAID.</p>','Repeatable role-switching demonstration')+'</div>';
 };
 function cancelOrder(b){W.cancelOrder(pickId(b));}
-function completeOrder(b){const id=pickId(b),o=S.orders.find(x=>x.id===id);if(!o||o.status!=='Ready for pickup')return notify('Order is not ready for pickup.');o.status='Picked up';audit('Customer pickup confirmed',id,'Handover completed');render();notify('Pickup confirmed and order closed.');}
+function completeOrder(b){const id=pickId(b),o=S.orders.find(x=>x.id===id);if(!o||o.status!=='Ready for pickup')return notify('Order is not ready for pickup.');o.status='Picked up';const st=S.stores.find(x=>x.id===o.storeId);if(st){st.sales+=o.total;st.traffic+=1;}audit('Customer pickup confirmed',id,'Handover completed; store sales '+money(o.total));render();notify('Pickup confirmed; store revenue and order status updated.');}
 const handlers={
  'store-detail':storeDetail,'supplier-review':supplierReview,'po-detail':b=>W.poDetail(pickId(b)),
  'quality-detail':qualityDetail,'quality-hold':qualityHold,'quality-release':qualityRelease,
