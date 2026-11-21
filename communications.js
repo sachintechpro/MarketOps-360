@@ -210,19 +210,36 @@ const raciEntries=receipt=>{
 };
 function receiptMarkup(receipt){
  const row=(letter,title,value)=>'<div class="comms-raci-row"><span class="comms-raci-letter">'+E(letter)+'</span><span class="comms-raci-name">'+E(title)+'</span><strong>'+E(value||'None assigned')+'</strong></div>';
- return '<div class="comms-receipt-head"><div><div class="comms-eyebrow">SELF-SERVICE ACTION RECEIPT</div><h3>✓ '+E(receipt.action)+' completed</h3><p>'+E(receipt.record)+' · '+E(receipt.at)+'</p></div>'+
+ const rolesRelated=unique([receipt.actor,receipt.r,receipt.a,...receipt.c,...receipt.i]);
+ const sent=S.messages.filter(x=>x.receiptId===receipt.id);
+ const notified=unique(sent.map(x=>x.recipient));
+ const textOpened=(S.textDraftEvents||[]).some(x=>x.receiptId===receipt.id);
+ const status=receipt.closed?'Completed — no follow-up required':
+  receipt.action==='Supplier confirmed PO'?'Awaiting receiving':
+  receipt.action==='Customer order placed'?'Awaiting store picking':
+  receipt.action==='Task updated'&&receipt.r==='Customer'?'Ready for customer pickup':
+  'Awaiting '+receipt.r;
+ const relevant=rolesRelated.length?rolesRelated.map(E).join(', '):'No related roles';
+ const messageStatus=notified.length?'Delivered to demo role inboxes: '+notified.map(E).join(', '):
+  'Not sent — optional demo role messaging';
+ const textStatus=textOpened?'SMS draft opened on device; delivery not verified':'Not sent';
+ return '<div class="comms-receipt-head"><div><div class="comms-eyebrow">SMART ACTION RECEIPT</div><h3>✓ '+E(receipt.action)+' saved</h3><p>'+E(receipt.record)+' · '+E(receipt.at)+'</p></div>'+
  '<button class="comms-icon-btn" aria-label="Close confirmation" data-comms-action="dismiss">×</button></div>'+
  '<div class="comms-receipt-body"><p class="comms-detail">'+E(receipt.detail||'Business action recorded successfully.')+'</p>'+
- '<p class="comms-updated"><strong>Records updated:</strong> '+receipt.updated.map(E).join(', ')+'</p>'+
+ '<p class="comms-updated"><strong>Records updated / linked:</strong> '+(receipt.updated||[]).map(E).join(', ')+'</p>'+
+ '<p class="comms-updated"><strong>Relevant demo roles:</strong> '+relevant+'<br><small>Role visibility is simulated; this is not a notification receipt.</small></p>'+
  '<div class="comms-raci-grid">'+row('R','Next responsible',receipt.r||'None · workflow complete')+
  row('A','Accountable',receipt.a)+
  (receipt.c.length?row('C','Consulted',receipt.c.join(', ')):'')+
  (receipt.i.length?row('I','Informed',receipt.i.join(', ')):'')+'</div>'+
- '<div class="comms-next"><strong>Next action</strong><p>'+E(receipt.next)+'</p><small>'+E(receipt.due)+'</small></div>'+
- '<p class="comms-honesty">In-app messages go to demo role inboxes. Text opens your device SMS composer; no automatic SMS is sent.</p>'+
+ '<div class="comms-next"><strong>'+E(status)+'</strong><p>'+E(receipt.next)+'</p><small>Due: '+E(receipt.due)+'</small>'+
+ (receipt.closed?'':'<small> · Created in '+E(receipt.r)+' My Work Queue</small>')+'</div>'+
+ '<div class="comms-delivery"><p><strong>In-app message status:</strong> '+messageStatus+'</p>'+
+ '<p><strong>SMS status:</strong> '+E(textStatus)+'</p></div>'+
+ '<p class="comms-honesty">In-app messages reach only simulated role inboxes. Send text opens a composer; no automatic SMS is sent.</p>'+
  '<div class="comms-actions"><button class="btn primary" data-comms-action="message" data-receipt="'+E(receipt.id)+'">Send message</button>'+
  '<button class="btn" data-comms-action="text" data-receipt="'+E(receipt.id)+'">Send text…</button>'+
- '<button class="btn" data-comms-action="open-messages">View handoffs</button></div></div>';
+ '<button class="btn" data-comms-action="open-queue">View follow-up</button></div></div>';
 }
 function showReceipt(){
  const receipt=S.actionReceipts.find(r=>r.id===S.commsPending);
