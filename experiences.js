@@ -195,7 +195,11 @@ renderers.transfers=function(){
  '<div style="margin-top:14px">'+card('Example transfer controls','<p class="card-sub">Create a transfer to test stock conservation and authorized handoffs. Seeded historical transfer examples remain in the documented business scenarios.</p>')+'</div>';
 };
 const originalProcurement=renderers.procurement;
-renderers.procurement=function(){return originalProcurement().replace(/Draft → confirmed → inbound → received → reconciled/,'Confirm the PO to create an ASN; then Distribution records actual receipt.');};
+renderers.procurement=function(){
+ const html=originalProcurement().replace(/Draft → confirmed → inbound → received → reconciled/,'Confirm the PO to create an ASN; then Distribution records actual receipt.');
+ const rows=S.pos.map(p=>'<tr><td><strong>'+E(p.id)+'</strong></td><td>'+E(p.sku||'Legacy sample')+'</td><td>'+E(p.supplier)+'</td><td>'+status(p.status)+'</td><td>'+actionBtn('Review','po-detail',p.id)+'</td></tr>');
+ return html+'<div style="margin-top:14px">'+card('Purchase order self-service',table(['PO','SKU','Supplier','Status','Action'],rows),'Draft confirmation creates a linked inbound shipment for Distribution')+'</div>';
+};
 const originalReceiving=renderers.receiving;
 renderers.receiving=function(){return originalReceiving().replace(/Inspect (ASN-[^<]+)</g,'Inspect $1<').replace('Select the shipment being inspected. Real receiving should record accepted, rejected and short quantities separately.','Inspect a specific shipment to enter accepted, rejected and short units.');};
 renderers.customer=function(){
@@ -204,7 +208,7 @@ renderers.customer=function(){
 };
 const originalOrders=myOrders;
 myOrders=function(){
- const rows=S.orders.map(o=>'<tr><td><strong>'+E(o.id)+'</strong></td><td>'+E(o.date)+'</td><td>'+o.lines+'</td><td>'+money(o.total)+'</td><td>'+E(o.fulfillment)+'</td><td>'+status(o.status)+'</td><td>'+(o.status==='Placed'?actionBtn('Cancel order','cancel-order',o.id):'—')+'</td></tr>');
+ const rows=S.orders.map(o=>'<tr><td><strong>'+E(o.id)+'</strong></td><td>'+E(o.date)+'</td><td>'+o.lines+'</td><td>'+money(o.total)+'</td><td>'+E(o.fulfillment)+'</td><td>'+status(o.status)+'</td><td>'+(o.status==='Placed'?actionBtn('Cancel order','cancel-order',o.id):o.status==='Ready for pickup'?actionBtn('Confirm pickup','complete-order',o.id):'—')+'</td></tr>');
  return card('My orders',rows.length?table(['Order','Placed','Units','Total','Pickup','Status','Action'],rows):'<div class="empty">No orders yet. Browse the storefront to create an order.</div>','Customer account · '+S.customer.name,btn('Shop now','go-shop','primary'))+
  '<div style="margin-top:14px">'+card('Request help','<p class="card-sub">Contact store leadership about a pickup, missing item or product quality issue.</p>'+btn('Submit a service request','new-case','primary'))+'</div>';
 };
@@ -269,6 +273,7 @@ renderers['scenario-lab']=function(){
  '<div style="margin-top:14px">'+card('Manual end-to-end acceptance journey','<p>1. Customer places an order → Crew receives a picking task.</p><p>2. Procurement drafts a PO → confirms it → Distribution receives a linked ASN.</p><p>3. Quality holds stock → Customer availability decreases → Quality releases it.</p><p>4. Store transfer dispatches stock → receiving location gains it.</p><p>5. Expansion functional owners approve individual stage gates.</p><p>6. Finance updates capital forecast → critical exposure appears in RAID.</p>','Repeatable role-switching demonstration')+'</div>';
 };
 function cancelOrder(b){W.cancelOrder(pickId(b));}
+function completeOrder(b){const id=pickId(b),o=S.orders.find(x=>x.id===id);if(!o||o.status!=='Ready for pickup')return notify('Order is not ready for pickup.');o.status='Picked up';audit('Customer pickup confirmed',id,'Handover completed');render();notify('Pickup confirmed and order closed.');}
 const handlers={
  'store-detail':storeDetail,'supplier-review':supplierReview,'po-detail':b=>W.poDetail(pickId(b)),
  'quality-detail':qualityDetail,'quality-hold':qualityHold,'quality-release':qualityRelease,
@@ -276,11 +281,11 @@ const handlers={
  'initiative-detail':initiativeDetail,'finance-review':financeReview,'release-detail':releaseDetail,
  'new-promotion':newPromotion,'promotion-review':promotionReview,'report-action':reportAction,
  'admin-config':adminConfig,'reset-demo':resetDemo,'task-detail':b=>W.taskDetail(pickId(b)),
- 'transfer-specific':b=>W.transferStep(pickId(b)),'cancel-order':cancelOrder,
+ 'transfer-specific':b=>W.transferStep(pickId(b)),'cancel-order':cancelOrder,'complete-order':completeOrder,
  'run-live-tests':runIntegrity,'clear-live-tests':()=>{S.testRuns=[];render();notify('Results cleared.');},
  'new-receipt':()=>notify('Use a confirmed purchase order to create a traceable inbound shipment.')
 };
-const extraPermission={'promotion-review':['Buyer / Merchandising','Finance Manager','System Administrator'],'transfer-specific':['Regional Manager','Distribution Manager','Store Captain','System Administrator'],'cancel-order':['Customer','System Administrator']};
+const extraPermission={'promotion-review':['Buyer / Merchandising','Finance Manager','System Administrator'],'transfer-specific':['Regional Manager','Distribution Manager','Store Captain','System Administrator'],'cancel-order':['Customer','System Administrator'],'complete-order':['Customer','System Administrator']};
 document.addEventListener('click',e=>{
  const b=e.target.closest&&e.target.closest('[data-action]');if(!b)return;
  const a=b.dataset.action,fn=handlers[a];if(!fn)return;
@@ -299,10 +304,13 @@ chatAnswer=function(question){
  if(/what can i do|my role|self.service/.test(q))return 'You are working as '+S.role+'. The current page provides the actions permitted for this demo persona. Your changes update shared records and cross-functional work queues.';
  return baseChat(question);
 };
+const baseShop=shop;
+shop=function(){return baseShop()+'<div class="callout" style="margin-top:12px">Store-level stock is verified when you select a pickup location. Held or insufficient stock cannot be checked out.</div>';};
 const prevRender=render;
 try{const saved=sessionStorage.getItem('marketops360-session-v2');if(saved){Object.assign(S,JSON.parse(saved));}}catch(e){}
 render=function(){
  prevRender();
+ if(S.role==='Customer'&&S.page==='shop')document.querySelectorAll('[data-add]').forEach(b=>{const qty=available(b.dataset.add,'ST-101');if(qty<=0){b.disabled=true;b.title='Not available at Westside pickup';const tag=b.closest('.product-card')?.querySelector('.tag');if(tag)tag.textContent='Unavailable at Westside';}});
  try{sessionStorage.setItem('marketops360-session-v2',JSON.stringify(S))}catch(e){}
 };
 document.addEventListener('DOMContentLoaded',()=>{
