@@ -986,3 +986,28 @@ MarketOps 360 was created to make those relationships visible and interactive.
 **GitHub repository:** https://github.com/sachintechpro/MarketOps-360
 
 All content is fictional and intended for demonstration purposes.
+
+---
+
+## Self-Service Demonstration — Latest Enhancements
+
+Each of the 15 role experiences includes relevant information and self-service actions. Use the role selector to follow these connected journeys:
+
+1. **Customer:** Place an order, then switch to Crew to complete picking, and back to Customer to confirm pickup.
+2. **Procurement:** Create a draft order for a below-par SKU; Finance can approve an order exceeding the review threshold.
+3. **Procurement → Distribution:** Confirm supplier commitment, inspect the corresponding inbound shipment and record accepted, rejected and short quantities.
+4. **Quality:** Hold a SKU at a specific store or distribution center; verify the stock cannot be sold or transferred; release when cleared.
+5. **Regional / Store / Distribution:** Request, approve, dispatch and receive an inventory transfer. Both location balances update.
+6. **Buyer / Quality / Procurement / Store:** Review the appropriate product-introduction stage, capture evidence and approve or hold.
+7. **Expansion / functional owners:** Record evidence and stage-by-stage opening readiness approvals.
+8. **People:** Adjust workforce coverage by store.
+9. **Finance:** Revise store-opening capital forecasts; over-budget exposure enters the risk register.
+10. **IT Program Manager:** Update initiative progress, spending and release readiness, including required test evidence.
+11. **Store leaders / Crew:** Update assigned tasks with status, ownership and completion notes.
+12. **Administrator:** Review the operating rules, view recent actions and reset the scenario.
+
+**Sofia:** Use the chat assistant for short, page-aware explanations of a role, its workflow or the next business action.
+
+**Scenario & QA lab:** Run live integrity checks for cross-functional records, then complete the listed manual journey. The checks validate simulated business state; they are not automated browser tests.
+
+**Session behavior:** Changes persist across pages and refreshes in the current browser tab. The reset action restores the original example data. No external user account or live backend authorization is implied.
