@@ -1024,3 +1024,25 @@ The UAT register contains **18 previously observed defects** (2 Critical, 9 High
 Select **Record retest** to save the tester, execution evidence, outcome (**Not retested**, **Pass**, **Fail** or **Blocked**) and defect disposition. **Verified / Closed** is permitted only alongside a passing retest. Results persist only in the current browser tab; they are not uploaded to an external defect-management system. Select **Export UAT CSV** to export the 18 cases with recorded evidence and dispositions, or **Clear retest records** to reset only the retest results.
 
 The separate **Run integrity checks** control validates current simulated business records and is not equivalent to executing all 18 UAT reproduction procedures. Historical findings remain open until individually retested and verified. A complete live-browser UAT, including mobile usage, is still required for final acceptance.
+
+---
+
+## Smart Action Receipts · RACI Messaging
+
+All 15 demo role experiences now share a **Messages & Handoffs** page. Successful self-service changes generate an on-screen **Action Receipt** showing the changed business record, the affected areas, and the RACI follow-up:
+
+- **R – Responsible:** Role expected to take the next action.
+- **A – Accountable:** Role responsible for oversight and completion.
+- **C – Consulted:** Roles that can provide input when needed.
+- **I – Informed:** Roles that may need status visibility.
+
+When a next action is required, a traceable handoff appears in the Responsible role's **Handoffs** tab. Completed workflows explicitly show **No follow-up required**.
+
+Every action receipt offers two optional communications:
+
+1. **Send message:** Select RACI recipients (Responsible and Accountable by default, excluding the acting role; Consulted and Informed can be selected). The message is delivered to the selected **demo role inboxes in the same browser tab**. Recipients can read messages after switching roles. This does not send an email or notify a real employee.
+2. **Send text…:** Prepare a short SMS-style handoff. Enter a real recipient number only if authorized, then **Open SMS app** to review and explicitly send from your own device; or **Copy text** for another channel. MarketOps never sends the SMS itself or claims delivery confirmation. Entered phone numbers are not saved.
+
+Open **Messages & Handoffs** from the sidebar to see **Inbox**, **Sent**, and **Handoffs**. Responsible owners can mark a follow-up complete with evidence. All information is simulated and persists in the current browser tab until the demo is reset or the tab session ends.
+
+**Safety and scope:** Role selection, access restrictions, and role inboxes are simulated, not real user authentication. These communications are **not** a production SMS gateway, email provider, or real employee-notification system. The existing QA & UAT defect register remains unchanged; its open defects are not automatically considered fixed.
