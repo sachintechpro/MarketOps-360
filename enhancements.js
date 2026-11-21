@@ -4,6 +4,7 @@
 const E=v=>String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const today=()=>new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
 const show=(msg)=>notify(msg);
+const clean=d=>{Object.keys(d).forEach(k=>{if(typeof d[k]==='string')d[k]=d[k].replace(/[<>]/g,'').trim();});return d;};
 const el=(label,name,value='',type='text',extra='')=>'<div class="field"><label>'+E(label)+'</label><input name="'+name+'" type="'+type+'" value="'+E(value)+'" '+extra+' required></div>';
 const select=(label,name,choices,selected)=>'<div class="field"><label>'+E(label)+'</label><select name="'+name+'">'+choices.map(v=>{const id=Array.isArray(v)?v[0]:v,txt=Array.isArray(v)?v[1]:v;return '<option value="'+E(id)+'" '+(id===selected?'selected':'')+'>'+E(txt)+'</option>'}).join('')+'</select></div>';
 const areaNames=['Store operations','Procurement','Distribution','Expansion','Quality','Technology','Finance','People','Buying','Customer service'];
@@ -78,7 +79,7 @@ function dialog(title,content,save,onSave){
  enhanceTooltips();
  x.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>x.remove());
  x.onclick=e=>{if(e.target===x)x.remove()};
- x.querySelector('form').onsubmit=e=>{e.preventDefault();if(!e.target.reportValidity())return;const d=Object.fromEntries(new FormData(e.target));if(onSave(d)!==false)x.remove();};
+ x.querySelector('form').onsubmit=e=>{e.preventDefault();if(!e.target.reportValidity())return;const d=clean(Object.fromEntries(new FormData(e.target)));if(onSave(d)!==false)x.remove();};
  return x;
 }
 function taskDetail(id){
@@ -268,6 +269,7 @@ function newProduct(d){
 }
 const baseCommit=commit;
 commit=function(a,d){
+ d=clean(d);
  if(!window.marketOpsAuthorized(a))return show('Selected role cannot perform this action.'),false;
  if(a==='checkout')return checkout(d);
  if(a==='product')return newProduct(d);
