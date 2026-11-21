@@ -30,3 +30,11 @@
 .role-kpis .kpi{min-width:0}
 @media(min-width:1200px){.role-hero h2{font-size:28px}}
 @media(max-width:760px){.role-hero{padding:19px}.role-hero h2{font-size:22px}.test-row{align-items:flex-start}.test-row small{max-width:230px}}
+
+/* Sofia: chatbot-only visibility and mobile input improvements. */
+#contextChat .chat-launch{width:auto;min-width:58px;padding:0 13px;border-radius:24px;font-size:12px;cursor:pointer}
+#contextChat .chat-form{flex-shrink:0}
+#contextChat .chat-form input{font-size:14px;min-height:40px}
+#contextChat .chat-form button{font-size:12px;cursor:pointer}
+#contextChat .chat-msg{font-size:12px}
+@media(max-width:760px){#contextChat .chat-panel{height:min(510px,calc(100dvh - 100px))}}
