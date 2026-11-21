@@ -281,7 +281,14 @@ commit=function(a,d){
   transfer:['transferLog','Transfer requested']
  }[a];
  const before=kind?(S[kind[0]]?.length||0):0;
+ const legacyCount=a.startsWith('inventory-adjust:');
+ const countBefore=legacyCount?(S.inventoryAdjustments?.length||0):0;
  const old=baseCommit(a,d);
+ if(legacyCount&&(S.inventoryAdjustments?.length||0)>countBefore){
+   const count=S.inventoryAdjustments[0];
+   audit('Inventory count',count.sku,count.before+' → '+count.after+' · '+count.reason);
+   render();
+ }
  if(kind&&(S[kind[0]]?.length||0)>before){
    const record=S[kind[0]][0];
    audit(kind[1],record.id||record.sku,record.title||record.name||record.reason||d.title||a);
