@@ -167,7 +167,7 @@ function saveResult(id){
   W.select('Defect disposition','state',states,current.state)+
   W.el('Tester / reviewer','tester',current.tester||S.role)+
   '<div class="field"><label for="uat-evidence-input">Execution evidence, actual result or blocker</label>'+
-  '<textarea id="uat-evidence-input" name="evidence" rows="4" required placeholder="Steps performed, observed outcome, screenshot/reference or blocker">'+E(current.evidence)+'</textarea></div>'+
+  '<textarea id="uat-evidence-input" name="evidence" rows="4" required placeholder="Steps performed, observed outcome, screenshot/reference or blocker">'+E(current.evidence)+'</textarea></div>',
   'Save retest result', d=>{
     if(!d.tester.trim()||!d.evidence.trim())return notify('Tester and evidence are required.'),false;
     if(d.state==='Verified / Closed'&&d.outcome!=='Pass')return notify('A defect can be verified closed only after a passing retest.'),false;
