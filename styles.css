@@ -30,3 +30,15 @@
 .role-kpis .kpi{min-width:0}
 @media(min-width:1200px){.role-hero h2{font-size:28px}}
 @media(max-width:760px){.role-hero{padding:19px}.role-hero h2{font-size:22px}.test-row{align-items:flex-start}.test-row small{max-width:230px}}
+
+/* Targeted responsive correction: role home cards and handoff details only. */
+.role-content .handoff-details{display:grid;gap:0}
+.role-content .handoff-details .metric-line{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:14px;align-items:start;padding:10px 0}
+.role-content .handoff-details .metric-line span,.role-content .handoff-details .metric-line b{display:block;min-width:0;overflow-wrap:anywhere;line-height:1.45}
+.role-content .handoff-details .metric-line b{text-align:right}
+@media(max-width:760px){
+  .role-content{align-items:start}
+  .role-content .card{min-height:0}
+  .role-content .handoff-details .metric-line{grid-template-columns:1fr;gap:3px;padding:9px 0}
+  .role-content .handoff-details .metric-line b{text-align:left}
+}
