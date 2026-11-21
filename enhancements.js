@@ -41,7 +41,7 @@ const roleMap={
  'transfer-action':['Regional Manager','Store Captain','Distribution Manager','System Administrator'],
  'create-po':['Procurement Manager','System Administrator'],
  'create-po-specific':['Procurement Manager','System Administrator'],
- 'po-detail':['Procurement Manager','Distribution Manager','System Administrator'],
+ 'po-detail':['Procurement Manager','Distribution Manager','Finance Manager','Executive','System Administrator'],
  'receive-specific':['Distribution Manager','Quality Manager','Store Captain','System Administrator'],
  'receive-shipment':['Distribution Manager','Quality Manager','Store Captain','System Administrator'],
  'adjust-stock':['Store Captain','Mate','Regional Manager','Distribution Manager','System Administrator'],
@@ -107,32 +107,35 @@ function createPo(sku){
   const qty=Number(d.qty),unitCost=Number(d.unitCost);
   if(!Number.isInteger(qty)||qty<1||unitCost<=0)return show('Enter a valid positive quantity and unit cost.'),false;
   const id='PO-'+(49000+S.pos.length),amount=Math.round(qty*unitCost*100)/100;
-  S.pos.unshift({id,sku,qty,unitCost,dc:d.dc,supplier:p.supplier,date:today(),amount,status:'Draft',lines:1,reason:d.reason});
-  audit('Draft purchase order',id,sku+' × '+qty);render();show('Draft '+id+' created. Confirm it from the PO register.');
+  S.pos.unshift({id,sku,qty,unitCost,dc:d.dc,supplier:p.supplier,date:today(),amount,status:amount>S.settings.approvalLimit?'Pending financial approval':'Draft',lines:1,reason:d.reason});
+  audit('Draft purchase order',id,sku+' × '+qty);render();show(id+' created. '+(amount>S.settings.approvalLimit?'Financial approval required.':'Confirm it from the PO register.'));
  });
 }
 function poDetail(id){
  const po=S.pos.find(x=>x.id===id);if(!po)return show('PO unavailable.');
  if(!po.sku)return dialog('Existing sample PO · '+id,'<p>This imported example has no SKU-level line data. Create a new purchase order for an end-to-end traceable demonstration.</p>','Close',()=>{});
- const choices=po.status==='Draft'?['Draft','Confirmed','Cancelled']:po.status==='Confirmed'?['Confirmed','Cancelled']:[''+po.status];
+ const choices=po.status==='Pending financial approval'?['Pending financial approval','Draft','Cancelled']:po.status==='Draft'?['Draft','Confirmed','Cancelled']:po.status==='Confirmed'?['Confirmed','Cancelled']:[''+po.status];
  dialog('Purchase order · '+id,'<p class="card-sub">'+E(po.supplier)+' · '+E(po.sku)+' · '+po.qty+' units · '+money(po.amount)+'</p>'+select('Order status','status',choices,po.status)+el('Supplier acknowledgment / reason','evidence',po.evidence||'Supplier confirmed quantity and delivery'), 'Save PO',d=>{
+   if(po.status==='Pending financial approval'&&d.status==='Draft'&&!['Finance Manager','Executive','System Administrator'].includes(S.role))return show('Finance or Executive approval required.'),false;
+   if(po.status==='Draft'&&d.status==='Confirmed'&&!['Procurement Manager','System Administrator'].includes(S.role))return show('Only Procurement can confirm supplier commitments.'),false;
    if(po.status==='Draft'&&d.status==='Confirmed'){
      if(!d.evidence.trim())return show('Supplier confirmation evidence is required.'),false;
      const asn='ASN-'+(7400+S.shipments.length);
      S.shipments.unshift({id:asn,po:id,supplier:po.supplier,sku:po.sku,qty:po.qty,dc:po.dc||'DC-W',eta:'Tomorrow · scheduled',cases:po.qty,status:'Scheduled'});
      audit('Supplier confirmed PO',id,'Created inbound '+asn);
    }
-   po.status=d.status;po.evidence=d.evidence;render();show(id+' updated to '+d.status);
+   if(d.status==='Cancelled')S.shipments.filter(sh=>sh.po===id&&!['Received','Partial'].includes(sh.status)).forEach(sh=>sh.status='Cancelled');
+   po.status=d.status;po.evidence=d.evidence;audit('PO status updated',id,d.status);render();show(id+' updated to '+d.status);
  });
 }
 function receive(id){
- const s=S.shipments.find(x=>x.id===id);if(!s||s.status==='Received')return show('Shipment not available for receiving.');
+ const s=S.shipments.find(x=>x.id===id);if(!s||['Received','Cancelled'].includes(s.status))return show('Shipment not available for receiving.');
  const po=S.pos.find(p=>p.id===s.po);
- if(po&&po.status==='Draft')return show('Confirm the PO before recording delivery.');
+ if(po&&['Draft','Cancelled','Pending financial approval'].includes(po.status))return show('Confirm and approve the PO before recording delivery.');
  const plausible=S.products.filter(p=>p.supplier===s.supplier);
  const sku=s.sku||(plausible[0]&&plausible[0].sku);
  if(!sku)return show('Shipment has no matching SKU. Reconcile supplier master first.');
- const expected=s.qty||Math.max(1,Math.round(s.cases/8));
+ const expected=s.remaining||s.qty||Math.max(1,Math.round(s.cases/8));
  dialog('Inspect and receive · '+id,'<p class="card-sub">Reconcile shipment '+E(s.id)+' against '+E(s.po)+' at '+E(s.dc)+'. Initial sample shipments use converted illustrative unit counts.</p>'+
  select('Inspected SKU','sku',plausible.map(p=>[p.sku,p.name+' · '+p.sku]),sku)+
  el('Expected units','expected',expected,'number','min="1" step="1"')+
@@ -147,7 +150,7 @@ function receive(id){
   const dc=s.dc.includes('South')?'DC-S':'DC-W';
   if(accepted)move(d.sku,dc,accepted);
   if(accepted&&d.disposition==='Hold accepted units')S.holds.unshift({id:'H-'+(200+S.holds.length),sku:d.sku,location:dc,units:accepted,status:'Held',reason:'Receiving inspection hold',evidence:d.evidence});
-  Object.assign(s,{sku:d.sku,expected:exp,accepted,rejected,short,status:short?'Partial':'Received',evidence:d.evidence});
+  Object.assign(s,{sku:d.sku,expected:exp,accepted:(s.accepted||0)+accepted,rejected:(s.rejected||0)+rejected,short,remaining:short,status:short?'Partial':'Received',evidence:d.evidence});
   if(po)po.status=short?'Partially received':'Received';
   audit('Receipt inspected',id,'Accepted '+accepted+' · rejected '+rejected+' · short '+short);render();show('Receipt recorded. Inventory and PO updated.');
  });
