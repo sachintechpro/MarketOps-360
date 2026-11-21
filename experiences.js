@@ -166,7 +166,7 @@ function reportAction(b){
  S.risks.forEach(x=>rows.push(['RAID',x.id,x.title,x.status+' · '+x.severity]));
  S.expansions.forEach(x=>rows.push(['Expansion',x.id,x.name,'Forecast '+x.forecast+' · '+x.health]));
  S.initiatives.forEach(x=>rows.push(['IT initiative',x.id,x.name,x.health+' · '+x.progress+'%']));
- const x=dialog(type,'<p>Live session snapshot: '+S.stores.length+' stores, '+S.pos.length+' purchase orders, '+S.risks.length+' risks and '+S.expansions.length+' expansion projects.</p><p class="card-sub">CSV includes current shared records and business statuses. No external reporting service is contacted.</p>', 'Export CSV',()=>{downloadCsv('marketops-360-operating-snapshot.csv',rows);audit('Report exported','Session',type);return true;});
+ const x=dialog(type,'<p>Live session snapshot: '+S.stores.length+' stores, '+S.pos.length+' purchase orders, '+S.risks.length+' risks and '+S.expansions.length+' expansion projects.</p><p class="card-sub">CSV includes current shared records and business statuses. No external reporting service is contacted.</p>', 'Export CSV',()=>{downloadCsv('marketops-360-operating-snapshot.csv',rows);audit('Report exported','Session',type);render();return true;});
 }
 function resetDemo(){
  dialog('Reset demonstration','<p>This restores initial sample data and clears changes made in this tab. Existing repository and deployment are not changed.</p>', 'Reset and reload',()=>{
