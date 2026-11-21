@@ -146,7 +146,6 @@ function config(type,record,detail,actor){
     set(null,'System Administrator',null,null,['IT Program Manager'],[],['System Rules']);break;
   case 'Report exported':
     set(null,actor,null,null,[],[],['Reports']);break;
-  case 'Customer pickup confirmed':break;
   default:
     set(null,actor,null,null,[],[],[type.includes('stock')?'Inventory':'Operating Records']);break;
  }
@@ -186,7 +185,14 @@ const raciEntries=receipt=>{
  const rows=[['R','Responsible',receipt.r],['A','Accountable',receipt.a]];
  for(const r of receipt.c)rows.push(['C','Consulted',r]);
  for(const r of receipt.i)rows.push(['I','Informed',r]);
- return rows.filter(x=>x[2]&&x[2]!==receipt.actor);
+ const dedup=new Map();
+ for(const [code,label,role] of rows){
+  if(!role||role===receipt.actor)continue;
+  if(dedup.has(role)){
+   const item=dedup.get(role);item[0]+='/'+code;item[1]+=' / '+label;
+  }else dedup.set(role,[code,label,role]);
+ }
+ return [...dedup.values()];
 };
 function receiptMarkup(receipt){
  const row=(letter,title,value)=>'<div class="comms-raci-row"><span class="comms-raci-letter">'+E(letter)+'</span><span class="comms-raci-name">'+E(title)+'</span><strong>'+E(value||'None assigned')+'</strong></div>';
@@ -267,8 +273,9 @@ function composeMessage(receipt){
  if(!receipt)return notify('Action receipt unavailable.');
  const recipients=raciEntries(receipt);
  if(!recipients.length)return notify('No other RACI role needs a message for this completed action.');
+ const actionable=recipients.some(([code])=>code.includes('R')||code.includes('A'));
  const rows=recipients.map(([code,label,role],idx)=>
-  '<label class="comms-recipient"><input type="checkbox" name="to_'+idx+'" '+(code==='R'||code==='A'?'checked':'')+'><span class="comms-raci-letter">'+E(code)+'</span>'+
+  '<label class="comms-recipient"><input type="checkbox" name="to_'+idx+'" '+((code.includes('R')||code.includes('A')||(!actionable&&idx===0))?'checked':'')+'><span class="comms-raci-letter">'+E(code)+'</span>'+
   '<span><strong>'+E(role)+'</strong><small>'+E(label)+'</small></span></label>').join('');
  const body='MarketOps 360 · '+receipt.record+' — '+receipt.action+'. '+receipt.detail+
   ' Next: '+receipt.next+'. Owner: '+(receipt.r||'No follow-up')+'. Due: '+receipt.due+'.';
