@@ -30,7 +30,7 @@ const held=(sku,loc)=>S.holds.filter(h=>h.sku===sku&&h.location===loc&&h.status=
 const available=(sku,loc)=>Math.max(0,at(sku,loc)-held(sku,loc));
 const sync=sku=>{const p=findProduct(sku);if(p)p.stock=Object.values(positions(sku)).reduce((a,b)=>a+Number(b||0),0);};
 const move=(sku,loc,delta)=>{positions(sku)[loc]=at(sku,loc)+delta;sync(sku);};
-const audit=(action,record,detail)=>S.audit.unshift({when:today(),role:S.role,action,record,detail});
+const audit=(action,record,detail)=>{S.audit.unshift({when:today(),role:S.role,action,record,detail});window.MarketOpsComms?.onAudit(action,record,detail,S.role);};
 const roleMap={
  'new-task':['Crew','Mate','Store Captain','Regional Manager','Quality Manager','People Manager','System Administrator','IT Program Manager','Procurement Manager','Expansion Director'],
  'new-product':['Buyer / Merchandising','System Administrator'],
@@ -273,8 +273,20 @@ commit=function(a,d){
  if(!window.marketOpsAuthorized(a))return show('Selected role cannot perform this action.'),false;
  if(a==='checkout')return checkout(d);
  if(a==='product')return newProduct(d);
+ const kind={
+  task:['tasks','Task added'],risk:['risks','RAID item logged'],
+  expansion:['expansions','Expansion project created'],
+  supplier:['suppliers','Supplier profile created'],
+  initiative:['initiatives','IT initiative created'],
+  transfer:['transferLog','Transfer requested']
+ }[a];
+ const before=kind?(S[kind[0]]?.length||0):0;
  const old=baseCommit(a,d);
- if(a==='product'&&S.products[0])positions(S.products[0].sku);
+ if(kind&&(S[kind[0]]?.length||0)>before){
+   const record=S[kind[0]][0];
+   audit(kind[1],record.id||record.sku,record.title||record.name||record.reason||d.title||a);
+   render();
+ }
  return old;
 };
 const baseAct=act;
