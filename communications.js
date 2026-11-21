@@ -48,7 +48,10 @@ function config(type,record,detail,actor){
   case 'Task added':
     newAssignment(parseRole(task?.assigneeRole)||parseRole(task?.owner)||'Mate','Complete the assigned task and record evidence');break;
   case 'Task updated':
-    if(task?.status==='Complete'||task?.status==='Cancelled')set(null,'Store Captain',null,null,[],['Regional Manager'],['Tasks','Work Queue']);
+    if(task?.status==='Complete'&&task?.orderId)
+      set('Customer','Store Captain','Confirm pickup of the staged customer order','At the agreed pickup window',['Mate'],['Crew'],['Customer Orders','Store Tasks','Pickup Readiness']);
+    else if(task?.status==='Complete'||task?.status==='Cancelled')
+      set(null,'Store Captain',null,null,[],['Regional Manager'],['Tasks','Work Queue']);
     else if(task?.status==='Blocked')set('Store Captain','Regional Manager','Resolve the blocked work or reassign it','Immediate',[],[actor],['Tasks','Escalations']);
     else newAssignment(parseRole(task?.assigneeRole)||parseRole(task?.owner)||'Mate','Continue assigned work and record the next status');break;
   case 'Draft purchase order':
@@ -60,7 +63,9 @@ function config(type,record,detail,actor){
     else if(po?.status==='Cancelled')set(null,'Procurement Manager',null,null,[],['Distribution Manager','Finance Manager'],['Purchase Orders','Inbound Shipments']);
     else set('Finance Manager','Finance Manager','Review the PO decision','Before order release',['Procurement Manager'],[],['Purchase Orders']);break;
   case 'Supplier confirmed PO':
-    set('Distribution Manager','Procurement Manager','Inspect and reconcile the linked inbound shipment','On delivery',['Quality Manager'],['Store Captain'],['Purchase Orders','Inbound Shipments']);break;
+    set('Distribution Manager','Procurement Manager','Inspect and reconcile the linked inbound shipment',
+      S.shipments.find(x=>x.po===record&&x.status!=='Received')?.eta||'Upon scheduled delivery',
+      ['Quality Manager'],['Store Captain'],['Purchase Orders','Inbound Shipments']);break;
   case 'Receipt inspected':
     if(shipment?.status==='Partial')set('Procurement Manager','Distribution Manager','Reconcile shortage and arrange balance delivery','Next supplier update',['Quality Manager'],['Finance Manager'],['Receiving','Purchase Orders','Inventory']);
     else set('Store Captain','Distribution Manager','Review released stock and replenish store demand','Next replenishment run',['Quality Manager'],['Procurement Manager'],['Receiving','Inventory']);break;
@@ -142,6 +147,8 @@ function config(type,record,detail,actor){
     if(S.uatReviews?.[record]?.outcome==='Pass')
       set(null,'Quality Manager',null,null,[],['IT Program Manager'],['QA & UAT Bench']);
     else set('IT Program Manager','Quality Manager','Investigate failing or blocked UAT scenario','Next defect triage',['System Administrator'],['Executive'],['QA & UAT Bench']);break;
+  case 'Handoff completed':
+    set(null,'Store Captain',null,null,[],[],['Follow-up Work Queue','Handoff History']);break;
   case 'Admin configuration':
     set(null,'System Administrator',null,null,['IT Program Manager'],[],['System Rules']);break;
   case 'Report exported':
