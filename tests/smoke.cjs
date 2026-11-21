@@ -139,6 +139,52 @@ form.onsubmit({preventDefault(){},target:form});
 assert.equal(S.textDraftEvents.length,1,'SMS composer was not invoked from explicit user submission');
 assert.ok(!S.textDraftEvents[0].status.includes('delivered'),'SMS event falsely claims delivery');
 
+// Full Smart Action Receipt / My Work Queue acceptance chain
+for(const role of roles){
+ S.role=role;S.page='work-queue';data.render();
+ assert.equal(S.page,'work-queue','Work Queue unavailable to '+role);
+ assert.ok(renderers['work-queue']().includes('My next actions'),'Work Queue did not render for '+role);
+}
+S.role='Crew';S.page='work-queue';
+assert.ok(renderers['work-queue']().includes('ORD-UAT-001'),
+ 'Customer order handoff missing from next owner My Work Queue');
+S.tasks.unshift({id:'T-UAT-PICK',orderId:'ORD-UAT-001',area:'Store operations',
+ title:'Pick order ORD-UAT-001',status:'Complete',owner:'Crew',assigneeRole:'Crew',due:'Today'});
+data.workflows.audit('Task updated','T-UAT-PICK','Complete · Ready for pickup');
+assert.equal(S.actionReceipts[0].r,'Customer','Crew picking must hand off to customer pickup');
+assert.equal(S.actionReceipts[0].record,'ORD-UAT-001','Next receipt must link originating order');
+assert.ok(S.handoffs.some(x=>x.record==='ORD-UAT-001'&&x.owner==='Customer'&&x.status==='Open'),
+ 'Customer did not receive order pickup handoff');
+assert.ok(!S.handoffs.some(x=>x.record==='ORD-UAT-001'&&x.owner==='Crew'&&x.status==='Open'),
+ 'Prior Crew handoff remained open after picking');
+S.role='Customer';S.page='work-queue';
+assert.ok(renderers['work-queue']().includes('Confirm pickup'),
+ 'Customer pickup missing from My Work Queue');
+data.workflows.audit('Customer pickup confirmed','ORD-UAT-001','Handover complete');
+assert.ok(S.actionReceipts[0].closed,'Pickup completion should have no next action');
+assert.ok(!S.handoffs.some(x=>x.record==='ORD-UAT-001'&&x.status==='Open'),
+ 'Pickup left a stale RACI follow-up');
+const closedReceiptHtml=renderers['work-queue']();
+assert.ok(closedReceiptHtml.includes('My next actions'));
+S.pos.unshift({id:'PO-UAT-001',sku:'PRD-1042',status:'Confirmed',supplier:'Valley Fresh Farms'});
+S.shipments.unshift({id:'ASN-UAT-001',po:'PO-UAT-001',status:'Scheduled',eta:'Nov 22 · 9 AM'});
+S.role='Procurement Manager';
+data.workflows.audit('Supplier confirmed PO','PO-UAT-001','Supplier delivery confirmed');
+assert.equal(S.actionReceipts[0].r,'Distribution Manager','Receiving owner not set');
+assert.equal(S.actionReceipts[0].due,'Nov 22 · 9 AM','Scheduled delivery due not reflected');
+S.role='Distribution Manager';S.shipments[0].status='Received';
+data.workflows.audit('Receipt inspected','ASN-UAT-001','20 accepted; 0 rejected');
+assert.equal(S.actionReceipts[0].r,'Store Captain','Stock follow-up owner incorrect');
+assert.ok(!S.handoffs.some(x=>x.record==='PO-UAT-001'&&x.status==='Open'),
+ 'Receiving failed to close earlier PO handoff');
+assert.ok(S.handoffs.some(x=>x.record==='ASN-UAT-001'&&x.owner==='Store Captain'&&x.status==='Open'),
+ 'Inbound receipt did not create next store follow-up');
+const lastReceiptId=actionReceipt.id;
+assert.ok(S.messages.filter(x=>x.receiptId===lastReceiptId).length===2,
+ 'Action receipt notification status cannot be reconciled to sent messages');
+assert.equal(S.textDraftEvents[0].receiptId,lastReceiptId,
+ 'SMS composer event must link to receipt without claiming delivery');
+
 console.log('CLEAN BUILD PASS — '+roles.length+' roles, '+views+' rendered role/page combinations, '+
  qa.cases.length+' UAT scenarios (2 Critical / 9 High / 7 Medium); '+
- 'UAT, RACI handoff, inbox, SMS compose and session-persistence smoke tests passed.');
+ 'UAT, Smart Receipts, role work queues, order and PO handoffs, demo inbox, SMS drafts and session-persistence smoke tests passed.');
