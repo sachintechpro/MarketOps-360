@@ -75,6 +75,7 @@ function dialog(title,content,save,onSave){
  const x=document.createElement('div');x.className='modal-shade';
  x.innerHTML='<div class="modal" role="dialog" aria-modal="true" aria-label="'+E(title)+'"><div class="card-head"><h2>'+E(title)+'</h2><button class="btn" type="button" data-close>✕</button></div><form>'+content+'<div class="modal-actions"><button class="btn" type="button" data-close>Cancel</button><button class="btn primary" type="submit">'+E(save)+'</button></div></form></div>';
  document.body.appendChild(x);
+ enhanceTooltips();
  x.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>x.remove());
  x.onclick=e=>{if(e.target===x)x.remove()};
  x.querySelector('form').onsubmit=e=>{e.preventDefault();if(!e.target.reportValidity())return;const d=Object.fromEntries(new FormData(e.target));if(onSave(d)!==false)x.remove();};
@@ -84,7 +85,7 @@ function taskDetail(id){
  const t=S.tasks.find(x=>x.id===id);if(!t)return show('Task record unavailable.');
  dialog('Update task · '+t.id,el('Task', 'title',t.title)+select('Status','status',['Open','In progress','Blocked','Complete'],t.status)+el('Accountable owner','owner',t.owner)+el('Evidence / handover note','note',t.note||'Work verified against operating checklist'), 'Save task',d=>{
   if(d.status==='Complete'&&!d.note.trim())return show('Completion evidence is required.'),false;
-  Object.assign(t,{title:d.title,status:d.status,owner:d.owner,note:d.note});audit('Task updated',id,d.status);render();show('Task status updated across role work queues.');
+  Object.assign(t,{title:d.title,status:d.status,owner:d.owner,note:d.note});if(d.status==='Complete'&&t.orderId){const order=S.orders.find(o=>o.id===t.orderId);if(order&&order.status==='Placed')order.status='Ready for pickup';}audit('Task updated',id,d.status);render();show('Task status updated across role work queues.');
  });
 }
 const roleArea={'Crew':['Store operations','Customer service','Quality'],'Mate':['Store operations','Customer service','Quality','Distribution'],'Store Captain':['Store operations','Customer service','Quality','Distribution'],'Procurement Manager':['Procurement','Buying'],'Buyer / Merchandising':['Buying','Procurement'],'Distribution Manager':['Distribution'],'Quality Manager':['Quality'],'People Manager':['People'],'Finance Manager':['Finance'],'IT Program Manager':['Technology'],'Expansion Director':['Expansion'],'Regional Manager':['Store operations','People','Customer service','Expansion'],'Executive':['Finance','Expansion','Technology']};
