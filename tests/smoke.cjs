@@ -6,8 +6,8 @@ const path=require('node:path');
 const vm=require('node:vm');
 const root=path.resolve(__dirname,'..');
 const read=p=>fs.readFileSync(path.join(root,p),'utf8');
-const jsFiles=['app.js','enhancements.js','experiences.js','uat-bench.js'];
-const cssFiles=['styles.css','uat-bench.css'];
+const jsFiles=['app.js','enhancements.js','experiences.js','uat-bench.js','communications.js'];
+const cssFiles=['styles.css','uat-bench.css','communications.css'];
 const html=read('index.html');
 for(const file of jsFiles.concat(cssFiles))assert.ok(fs.existsSync(path.join(root,file)),'Missing static asset: '+file);
 for(const file of jsFiles){
@@ -34,7 +34,7 @@ const document={
 class MockFormData{*[Symbol.iterator](){yield* Object.entries(inputs);}}
 const sessionStorage={getItem:k=>session[k]||null,setItem:(k,v)=>{session[k]=v;},removeItem:k=>delete session[k]};
 const data=new Function('document','window','sessionStorage','location','FormData',
- scripts+'\nreturn {S,roles,groups,renderers,shop,myOrders,render,qa:window.MarketOpsUAT};')
+ scripts+'\nreturn {S,roles,groups,renderers,shop,myOrders,render,qa:window.MarketOpsUAT,comms:window.MarketOpsComms,workflows:window.marketOpsWorkflows};')
  (document,{},sessionStorage,{reload(){}},MockFormData);
 const {S,roles,groups,renderers,qa}=data;
 assert.equal(roles.length,15,'15 demo roles must exist');
@@ -90,6 +90,55 @@ form.onsubmit({preventDefault(){},target:form});
 assert.equal(qa.getReview('UAT-001').state,'Verified / Closed');
 assert.equal(qa.getReview('UAT-001').outcome,'Pass');
 assert.ok(session['marketops360-session-v2'],'QA status not persisted in current-tab session');
+// RACI receipts, role inbox, explicit SMS composer and customer navigation
+assert.ok(data.comms,'RACI communication layer did not initialize');
+assert.ok(groups.some(g=>g[1].some(x=>x[0]==='messages')),'RACI inbox navigation missing');
+for(const role of roles){
+ S.role=role;S.page='messages';data.render();
+ assert.equal(S.page,'messages','Message inbox unavailable to '+role);
+ assert.ok(renderers.messages().includes('Messages sent'),'Inbox failed for '+role);
+}
+S.role='Customer';
+const receiptBefore=S.actionReceipts.length,handoffsBefore=S.handoffs.length;
+data.workflows.audit('Customer order placed','ORD-UAT-001','Test customer order confirmed');
+assert.equal(S.actionReceipts.length,receiptBefore+1,'Successful action did not produce receipt');
+assert.equal(S.handoffs.length,handoffsBefore+1,'Successful action did not produce handoff');
+const actionReceipt=S.actionReceipts[0],handoff=S.handoffs[0];
+assert.equal(actionReceipt.r,'Crew','Incorrect next Responsible owner');
+assert.equal(actionReceipt.a,'Store Captain','Incorrect Accountable owner');
+assert.equal(handoff.owner,'Crew','Wrong assigned handoff owner');
+assert.ok(data.comms.config('Customer pickup confirmed','ORD-UAT-001','', 'Customer').closed,
+  'Completed workflow incorrectly requires follow-up');
+assert.ok(data.comms.config('Customer order placed','ORD-UAT-001','', 'Customer').i.includes('Customer'),
+  'RACI Informed role missing');
+const commClick=listeners.find(x=>x.name==='click'&&String(x.listener).includes('[data-comms-action]'));
+assert.ok(commClick,'Communication button handler not found');
+commClick.listener({
+ target:{closest:()=>({dataset:{commsAction:'message',receipt:actionReceipt.id}})},
+ preventDefault(){},stopImmediatePropagation(){}
+});
+assert.ok(form&&typeof form.onsubmit==='function','Send message dialog did not open');
+inputs={to_0:'on',to_1:'on',subject:'ORD-UAT-001 · Pickup follow-up',body:'Please pick and confirm the customer order.'};
+form.onsubmit({preventDefault(){},target:form});
+assert.equal(S.messages.filter(x=>x.record==='ORD-UAT-001').length,2,
+ 'Expected Responsible and Accountable in-app role messages');
+assert.ok(S.messages.some(x=>x.recipient==='Crew'),'Responsible role did not receive message');
+assert.ok(S.messages.some(x=>x.recipient==='Store Captain'),'Accountable role did not receive message');
+assert.equal(S.messages.filter(x=>x.recipient==='Customer'&&x.record==='ORD-UAT-001').length,0,
+ 'Sender should not be sent its own RACI update');
+S.role='Crew';S.page='messages';data.render();
+assert.ok(renderers.messages().includes('ORD-UAT-001'),'Crew inbox did not show sent update');
+S.role='Customer';data.comms.textDraft(actionReceipt);
+assert.ok(form&&typeof form.onsubmit==='function','Text draft form did not open');
+inputs={phone:'',draft:'MarketOps test reminder'};
+form.onsubmit({preventDefault(){},target:form});
+assert.equal((S.textDraftEvents||[]).length,0,'Empty phone opened SMS composer');
+data.comms.textDraft(actionReceipt);
+inputs={phone:'+15555550199',draft:'MarketOps test reminder'};
+form.onsubmit({preventDefault(){},target:form});
+assert.equal(S.textDraftEvents.length,1,'SMS composer was not invoked from explicit user submission');
+assert.ok(!S.textDraftEvents[0].status.includes('delivered'),'SMS event falsely claims delivery');
+
 console.log('CLEAN BUILD PASS — '+roles.length+' roles, '+views+' rendered role/page combinations, '+
  qa.cases.length+' UAT scenarios (2 Critical / 9 High / 7 Medium); '+
- 'record, validation and session-persistence smoke tests passed.');
+ 'UAT, RACI handoff, inbox, SMS compose and session-persistence smoke tests passed.');
