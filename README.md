@@ -607,17 +607,19 @@ The objective is to demonstrate:
 
 ---
 
-# 8. Scenario & QA Lab
+# 8. QA & UAT Bench
 
-The **Scenario & QA Lab** provides repeatable business-rule validation.
+The **QA & UAT Bench** combines simulated data-integrity checks with an evidence-based UAT defect register.
 
 It is available to:
 
 - Executive
 - IT Program Manager
 - System Administrator
+- Quality Manager
+- Regional Manager
 
-The current validation suite contains **20 isolated scenarios**.
+The interactive QA Bench provides **12 live state-integrity checks** and **18 UAT regression scenarios**. The earlier 20 scenarios listed below remain examples of business coverage, rather than the current runnable case count.
 
 ### Core scenarios
 
@@ -1008,6 +1010,17 @@ Each of the 15 role experiences includes relevant information and self-service a
 
 **Sofia:** Use the chat assistant for short, page-aware explanations of a role, its workflow or the next business action.
 
-**Scenario & QA lab:** Run live integrity checks for cross-functional records, then complete the listed manual journey. The checks validate simulated business state; they are not automated browser tests.
+**QA & UAT Bench:** Run the 12 live integrity checks and review all 18 reported UAT defects. Open any case for detailed reproduction steps and record a new Pass, Fail or Blocked retest with your name and evidence. The register does not silently mark historical defects as fixed.
 
 **Session behavior:** Changes persist across pages and refreshes in the current browser tab. The reset action restores the original example data. No external user account or live backend authorization is implied.
+
+
+## QA & UAT Bench — Testing Guide
+
+Choose **Executive**, **IT Program Manager**, **Quality Manager**, **Regional Manager**, or **System Administrator** from the role selector, then open **QA & UAT Bench** in the enterprise navigation.
+
+The UAT register contains **18 previously observed defects** (2 Critical, 9 High and 7 Medium). Each entry contains a responsible role, preconditions, specific steps, the expected result, and what the previous UAT observed. Expand a scenario to review its details. Filter by severity, role, retest outcome or search terms.
+
+Select **Record retest** to save the tester, execution evidence, outcome (**Not retested**, **Pass**, **Fail** or **Blocked**) and defect disposition. **Verified / Closed** is permitted only alongside a passing retest. Results persist only in the current browser tab; they are not uploaded to an external defect-management system. Select **Export UAT CSV** to export the 18 cases with recorded evidence and dispositions, or **Clear retest records** to reset only the retest results.
+
+The separate **Run integrity checks** control validates current simulated business records and is not equivalent to executing all 18 UAT reproduction procedures. Historical findings remain open until individually retested and verified. A complete live-browser UAT, including mobile usage, is still required for final acceptance.
