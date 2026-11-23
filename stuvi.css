@@ -1,0 +1,29 @@
+/* StuVi — calm, readable, mobile-first assistant (no changes to dashboard layout). */
+#contextChat .chat-launch{width:54px;height:54px;border:1px solid #dbe3ee;box-shadow:0 12px 32px #101b3040;font-size:23px;transition:transform .18s ease,background .18s ease}
+#contextChat .chat-launch:hover{transform:translateY(-2px);background:#25385a}
+#contextChat .chat-launch:focus-visible,#contextChat .chat-close:focus-visible,#contextChat .stuvi-suggestions button:focus-visible,#contextChat .chat-ask:focus-visible{outline:3px solid #ff965f;outline-offset:3px}
+#contextChat .chat-panel{width:min(410px,calc(100vw - 30px));height:min(560px,calc(100dvh - 100px));bottom:68px;max-height:calc(100vh - 100px);border-radius:18px;z-index:145}
+#contextChat .chat-head{padding:16px 17px}
+#contextChat .chat-head b{font-size:17px;letter-spacing:-.3px}
+#contextChat .chat-head small{font-size:11px;margin-top:4px;font-weight:500;color:#d7dfea}
+#contextChat .chat-close{font-size:25px;min-width:38px;min-height:38px;cursor:pointer}
+#contextChat .stuvi-indicator{font:600 9px 'DM Sans',sans-serif;letter-spacing:.02em;color:#dfe9f3;border:1px solid #68788f;padding:3px 6px;border-radius:10px;margin-left:5px;vertical-align:middle;white-space:nowrap}
+#contextChat .chat-body{padding:15px;scroll-behavior:smooth}
+#contextChat .chat-msg{font-size:13px;line-height:1.55;padding:11px 13px;border-radius:13px;max-width:92%;margin-bottom:11px;white-space:pre-line;overflow-wrap:anywhere}
+#contextChat .stuvi-suggestions{display:flex;gap:6px;align-items:center;padding:10px 12px 8px;flex-wrap:wrap;background:#fff;border-top:1px solid #e7eaf0}
+#contextChat .stuvi-suggestions button{font-size:11px;font-weight:700;padding:8px 9px;border:1px solid #d7dfec;color:#243855;background:#f8fafc;border-radius:999px;cursor:pointer;min-height:33px}
+#contextChat .stuvi-suggestions button:hover{background:#e8effa}
+#contextChat .chat-form{padding:8px 12px 9px;gap:8px}
+#contextChat .chat-form input{font-size:14px;padding:11px 12px;min-height:43px}
+#contextChat .chat-form button{min-height:43px;padding:0 16px;font-size:12px}
+#contextChat .chat-form button:disabled{opacity:.55;cursor:wait}
+#contextChat .stuvi-disclaimer{font-size:10px;line-height:1.3;color:#66758a;padding:0 13px 11px;margin:0;background:#fff}
+@media(max-width:760px){
+ #contextChat{right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px))}
+ #contextChat .chat-panel{width:calc(100vw - 24px);height:min(580px,calc(100dvh - 95px));max-height:calc(100dvh - 95px);bottom:calc(66px + env(safe-area-inset-bottom,0px));border-radius:17px}
+ #contextChat .chat-form input{font-size:16px} /* avoids iOS zoom on focus */
+ #contextChat .chat-body{padding:12px}
+ #contextChat .chat-msg{font-size:13px}
+}
+@media(max-width:370px){#contextChat .stuvi-suggestions{gap:5px}#contextChat .stuvi-suggestions button{font-size:10px;padding:7px}#contextChat .chat-head b{font-size:16px}}
+@media(prefers-reduced-motion:reduce){#contextChat .chat-launch,#contextChat .chat-body{transition:none;scroll-behavior:auto}}
