@@ -1,0 +1,93 @@
+/* MarketOps 360 — Fieldwork visual system · November 2026
+   Independent identity: clear retail operations, warm editorial UI, high contrast.
+   Additive CSS only; dashboards, interactions and role model are unchanged. */
+:root{
+ --ink:#233634;--muted:#687a75;--line:#e3e8e3;--paper:#f7f8f5;
+ --white:#ffffff;--navy:#24443e;--orange:#c35d4c;--lime:#e4edcf;
+ --blue:#6678ad;--teal:#318675;--red:#be4a4d;
+ --shadow:0 12px 30px rgba(27,53,44,.045);--r:18px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:'DM Sans',Arial,sans-serif;font-size:14px}
+button,input,select,textarea{font-family:'DM Sans',Arial,sans-serif}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,
+[role="button"]:focus-visible{outline:3px solid #b66c5c;outline-offset:3px}
+.topbar{background:#fffefa;color:var(--ink);border-bottom:1px solid #e6eae3;box-shadow:0 2px 12px rgba(31,63,51,.028)}
+.brand{color:#27483e;font-weight:800;font-size:17px;letter-spacing:-.65px}
+.brand-mark{background:#dfece2;color:#245047;border-radius:13px;box-shadow:inset 0 0 0 1px #cadbce;font-family:Manrope,sans-serif}
+.brand small{color:#8b7b75;letter-spacing:1.5px;font-size:9px}
+.top-chip,.top-btn{background:#f6f7f3;color:#485d55;border:1px solid #e1e8df;border-radius:11px;font-weight:700}
+.user-dot{background:#ebdfe9;color:#5e4661;border:1px solid #dcc8d9}
+.sidebar{background:#fffefa;border-right:1px solid #e5eae4}
+.role-box{background:#e9f1ea;color:#24483d;border:1px solid #d8e6d9;box-shadow:none;border-radius:16px;padding:15px}
+.role-box label{color:#718778;letter-spacing:1.1px}
+.role-box select{background:#fff;color:#29463e;border:1px solid #c9d8cd;border-radius:10px;font-size:13px;min-height:41px}
+.nav-label{color:#83948b;letter-spacing:1.35px;font-size:10px;padding-top:18px}
+.nav-item{color:#566c62;border-radius:11px;font-size:12px;padding:10px 12px;line-height:1.3;transition:background .15s ease,color .15s ease}
+.nav-item:hover{background:#f0f4ed;color:#294a3f}
+.nav-item.active{background:#e7f0e8;color:#285647;font-weight:800;box-shadow:inset 3px 0 0 #43816e}
+.side-foot{background:#f4f5ef;color:#7c8d81;border-radius:13px}
+.main{padding-top:31px}
+.page-head{margin-bottom:24px;gap:20px}
+.eyebrow{color:#9c5f51;letter-spacing:1.45px;font-size:10px}
+.page-head h1{font-family:Manrope,'DM Sans',sans-serif;font-size:clamp(25px,2.2vw,34px);font-weight:800;letter-spacing:-1.1px;line-height:1.12}
+.page-head p{color:#6b7c76;font-size:13px;line-height:1.6;max-width:720px}
+.btn{background:#fffefa;color:#335046;border:1px solid #d6e1d9;border-radius:11px;padding:10px 14px;font-size:12px;line-height:1.35;font-weight:700;transition:border-color .15s ease,background .15s ease,transform .15s ease}
+.btn:hover{background:#f4f7f1;border-color:#b6cdbd;box-shadow:0 5px 18px rgba(43,79,62,.07)}
+.btn.primary{background:#bf5c4a;border-color:#bf5c4a;color:white}
+.btn.primary:hover{background:#a94d3d;border-color:#a94d3d}
+.btn.dark{background:#244a40;border-color:#244a40;color:white}
+.btn.lime{background:#dce9c4;border-color:#dce9c4;color:#2b4a35}
+.kpi,.card,.product-card{background:#fffefa;border:1px solid #e6ebe4;border-radius:var(--r);box-shadow:0 2px 13px rgba(38,61,51,.025)}
+.kpi{padding:19px 20px}
+.kpi-label{font-size:11px;font-weight:700;color:#75857d;letter-spacing:.03em}
+.kpi-value{font-family:Manrope,'DM Sans',sans-serif;font-weight:800;color:#263a35;letter-spacing:-1.1px}
+.kpi-foot{color:#43846a}
+.kpi-foot.bad{color:#b24448}
+.kpi-foot.warn{color:#9a6f2e}
+.card{padding:20px}
+.card-title{font-family:Manrope,'DM Sans',sans-serif;font-size:15px;color:#293b36}
+.card-sub{font-size:11px;color:#72817a}
+th{color:#7d8d85;background:#fbfcf9;font-size:10px;letter-spacing:.9px;border-bottom:1px solid #e5ebe4}
+td{color:#304840;font-size:12px;border-bottom:1px solid #eef1ec}
+tr:hover td{background:#fcfdf9}
+.status{background:#edf5ef;color:#32745b}
+.status.warn{background:#fff5e2;color:#966824}
+.status.risk{background:#fff0ef;color:#a83c43}
+.status.info{background:#f0f0fa;color:#665f95}
+.search,.field input,.field select,.filters select{border-radius:10px;border-color:#d9e3da;background:#fffefa;font-size:12px;min-height:39px}
+.bar{background:#c2d8ca}.bar.hot{background:#d17a64}
+.progress{background:#edf0e9}
+.progress i{background:#6f9d80}
+.progress.blue i{background:#788cb2}.progress.green i{background:#438f7a}
+.role-hero{position:relative;overflow:hidden;background:linear-gradient(120deg,#e8f2e8 0%,#f4f3e8 72%,#f9e6e0 100%);color:#213e34;border:1px solid #d9e7d9;border-radius:22px;box-shadow:none;padding:27px 30px}
+.role-hero::after{content:"";position:absolute;width:160px;height:160px;right:-54px;top:-88px;border-radius:50%;border:24px solid rgba(91,140,117,.09);pointer-events:none}
+.role-hero .eyebrow{color:#557763}
+.role-hero h2{font-family:Manrope,'DM Sans',sans-serif;color:#27463c;font-size:clamp(23px,2.4vw,32px);letter-spacing:-.9px;line-height:1.15;position:relative;z-index:1}
+.role-hero p{color:#60766b;font-size:13px;max-width:680px;line-height:1.6;position:relative;z-index:1}
+.role-hero .btn{background:#fffefa;color:#305844;border-color:#d6e3d6;position:relative;z-index:1}
+.role-hero .btn:hover{background:#f2f8f1}
+.hero{border-radius:22px}
+.role-content .card{box-shadow:0 2px 13px rgba(38,61,51,.025)}
+.comms-tab.active{background:#e9f2e9;color:#315d4c;border-color:#c8dfcd}
+.comms-notice,.comms-help{background:#f5f8f2;border-color:#e1e9dd;color:#405d4d}
+.uat-section{border-color:#e0e9df}
+.uat-case[open]{border-color:#b4ccbe}
+@media(max-width:950px){.main{padding:22px 19px 54px}.kpi{padding:16px}.card{padding:17px}.role-hero{padding:22px}}
+@media(max-width:760px){
+ .topbar{padding:0 14px}
+ .brand{font-size:15px}
+ .brand-mark{border-radius:11px}
+ .main{padding:21px 14px 76px}
+ .page-head{margin-bottom:18px}
+ .page-head h1{font-size:clamp(25px,6.5vw,30px);letter-spacing:-.9px;line-height:1.12}
+ .page-head p{font-size:12px;line-height:1.55}
+ .kpi{padding:16px}
+ .kpi-value{font-size:clamp(22px,6.3vw,30px)}
+ .card{padding:16px}
+ .role-hero{padding:22px 20px}
+ .role-hero h2{font-size:clamp(22px,5.5vw,29px)}
+ .role-hero p{font-size:12px}
+ .btn{min-height:41px}
+}
+@media(prefers-reduced-motion:reduce){.nav-item,.btn{transition:none}}
