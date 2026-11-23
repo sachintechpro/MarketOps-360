@@ -170,8 +170,13 @@ function mount(){
  };
  launch.addEventListener('click',()=>toggle());
  close.addEventListener('click',()=>toggle(false));
- form.addEventListener('submit',e=>{e.preventDefault();send(input.value);});
- chat.querySelectorAll('[data-ask]').forEach(b=>b.addEventListener('click',()=>send(b.dataset.ask)));
+ form.addEventListener('submit',e=>{e.preventDefault();const question=input.value;input.blur();send(question);});
+ chat.querySelectorAll('[data-ask]').forEach(b=>b.addEventListener('click',e=>{
+  e.preventDefault();
+  // iPhone Safari: tapping a prompt must not focus the composer or open the keyboard.
+  if(document.activeElement===input)input.blur();
+  send(b.dataset.ask);
+ }));
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&chat.classList.contains('open'))toggle(false);});
  chat.querySelector('.chat-context').textContent=S.role+' · '+label();
 }
