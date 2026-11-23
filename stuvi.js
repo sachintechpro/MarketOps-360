@@ -147,24 +147,26 @@ function mount(){
  const toggle=(open)=>{
   const show=typeof open==='boolean'?open:!chat.classList.contains('open');
   chat.classList.toggle('open',show);panel.setAttribute('aria-hidden',String(!show));launch.setAttribute('aria-expanded',String(show));
-  if(show){if(!body.children.length)addMessage(body,'assistant','Hi! I’m StuVi. I can help with priorities, risks or the next decision on this page.');input.focus({preventScroll:true});}
+  if(show){if(!body.children.length)addMessage(body,'assistant','Hi! I’m StuVi. I can help with priorities, risks or the next decision on this page.');} // Never trigger a phone keyboard just by opening the chat.
   else launch.focus({preventScroll:true});
  };
  const send=async(q)=>{
   q=strip(q).slice(0,450);if(!q||waiting)return;
   input.value='';addMessage(body,'user',q);
   waiting=true;submit.disabled=true;
-  const bubble=addMessage(body,'assistant','Checking that for you…');
   const c=context(),quick=localAnswer(q,c);
-  let answer=quick;
-  if(!answer){
+  // Suggestions with a grounded local answer respond immediately in the chat.
+  // Show a subtle in-chat pending message only if an AI request is actually needed.
+  const bubble=quick?addMessage(body,'assistant',brief(quick,440)):addMessage(body,'assistant','One moment…');
+  if(!quick){
+   let answer;
    try {answer=await aiAnswer(q,c);}
    catch(_) {answer=gentleFallback(q,c);}
+   bubble.textContent=brief(answer,440);
   }
-  bubble.textContent=brief(answer,440);
   conversation.push({role:'user',text:q},{role:'assistant',text:bubble.textContent});
   if(conversation.length>16)conversation.splice(0,conversation.length-16);
-  waiting=false;submit.disabled=false;body.scrollTop=body.scrollHeight;input.focus({preventScroll:true});
+  waiting=false;submit.disabled=false;body.scrollTop=body.scrollHeight; // Keep focus on selected suggestion; do not summon the mobile keyboard.
  };
  launch.addEventListener('click',()=>toggle());
  close.addEventListener('click',()=>toggle(false));
