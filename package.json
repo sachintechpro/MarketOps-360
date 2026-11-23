@@ -4,7 +4,7 @@
   "private": true,
   "description": "Static enterprise retail demonstration; dependency-free quality gate",
   "scripts": {
-    "test": "node tests/smoke.cjs",
-    "build": "node tests/smoke.cjs"
+    "test": "node tests/smoke.cjs && node tests/stuvi.cjs",
+    "build": "node tests/smoke.cjs && node tests/stuvi.cjs"
   }
 }
