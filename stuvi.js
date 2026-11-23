@@ -79,7 +79,7 @@ function nextDecision(c){
 function localAnswer(question,c=context()){
  const q=strip(question).toLowerCase();
  if(!q)return null;
- if(/^(hi|hey|hello|good morning|good afternoon|good evening)[!. ]*$/.test(q))return 'Hi, I’m StuVi. You’re viewing '+label()+' as '+c.role+'. What are you trying to decide?';
+ if(/^(hi|hey|hello|good morning|good afternoon|good evening)[!. ]*$/.test(q))return 'Hi, I’m StuVI. You’re viewing '+label()+' as '+c.role+'. What are you trying to decide?';
  if(/^(help|what can you do|how can you help|who are you)\??$/.test(q))return 'I can spot issues in this demo, explain a number, or help you find the next decision. Try “What needs attention?”';
  // Leave nuanced reasoning and trade-off questions for StuVi's AI service.
  if(/^(why\b|how\b|what if\b|would it\b|should we\b|compare\b|evaluate\b|help me decide\b)/.test(q))return null;
@@ -134,20 +134,20 @@ function mount(){
   return;
  }
  chat=document.createElement('div');chat.id='contextChat';
- chat.innerHTML='<button class="chat-launch stuvi-avatar-launch" type="button" aria-label="Open StuVi assistant" aria-expanded="false" aria-controls="stuvi-panel"><img src="stuvi-avatar.webp" alt="" width="54" height="54" decoding="async"></button>'+
-  '<section id="stuvi-panel" class="chat-panel stuvi-panel" role="dialog" aria-label="StuVi executive assistant" aria-hidden="true">'+
-   '<div class="chat-head"><div><b>StuVi <span class="stuvi-indicator">Demo assistant</span></b><small class="chat-context"></small></div><button type="button" class="chat-close" aria-label="Close StuVi">×</button></div>'+
+ chat.innerHTML='<button class="chat-launch stuvi-avatar-launch" type="button" aria-label="Open StuVI — Your Virtual Intelligence" aria-expanded="false" aria-controls="stuvi-panel"><img src="stuvi-avatar.webp" alt="" width="54" height="54" decoding="async"></button>'+
+  '<section id="stuvi-panel" class="chat-panel stuvi-panel" role="dialog" aria-label="StuVI — Your Virtual Intelligence" aria-hidden="true">'+
+   '<div class="chat-head"><div class="stuvi-identity"><img class="stuvi-portrait" src="stuvi-avatar.webp" width="46" height="46" decoding="async" alt=""><div class="stuvi-id-copy"><b class="stuvi-name">Stu<span class="stuvi-vi">VI</span></b><span class="stuvi-tagline">Your Virtual Intelligence</span></div></div><button type="button" class="chat-close" aria-label="Close StuVI">×</button></div><div class="stuvi-context-wrap"><span class="stuvi-context-label">Here with you</span><small class="chat-context"></small></div>'+
    '<div class="chat-body" role="log" aria-live="polite" aria-relevant="additions text"></div>'+
-   '<div class="stuvi-suggestions" aria-label="Suggested questions"><button type="button" data-ask="Give me a quick read">Quick read</button><button type="button" data-ask="What needs attention?">What needs attention?</button><button type="button" data-ask="What should I do next?">Next step</button></div>'+
-   '<form class="chat-form"><input class="chat-input" autocomplete="off" maxlength="450" aria-label="Message StuVi" placeholder="What would you like to know?"><button class="chat-ask" type="submit">Send</button></form>'+
-   '<p class="stuvi-disclaimer">Illustrative retail data · StuVi can advise, not perform actions.</p>'+
+   '<div class="stuvi-suggestions" aria-label="Suggested questions"><button type="button" data-ask="Give me a quick read">Brief me</button><button type="button" data-ask="What needs attention?">Needs attention</button><button type="button" data-ask="What should I do next?">Next decision</button></div>'+
+   '<form class="chat-form"><input class="chat-input" autocomplete="off" maxlength="450" aria-label="Ask StuVI" placeholder="Ask StuVI anything about this page…"><button class="chat-ask" type="submit">Send</button></form>'+
+   '<p class="stuvi-disclaimer">Independent retail simulation · StuVI helps you think; you stay in control.</p>'+
   '</section>';
  document.body.appendChild(chat);
  const launch=chat.querySelector('.chat-launch'),panel=chat.querySelector('.chat-panel'),close=chat.querySelector('.chat-close'),body=chat.querySelector('.chat-body'),input=chat.querySelector('.chat-input'),submit=chat.querySelector('.chat-ask'),form=chat.querySelector('form');
  const toggle=(open)=>{
   const show=typeof open==='boolean'?open:!chat.classList.contains('open');
   chat.classList.toggle('open',show);panel.setAttribute('aria-hidden',String(!show));launch.setAttribute('aria-expanded',String(show));
-  if(show){if(!body.children.length)addMessage(body,'assistant','Hi! I’m StuVi. I can help with priorities, risks or the next decision on this page.');} // Never trigger a phone keyboard just by opening the chat.
+  if(show){if(!body.children.length)addMessage(body,'assistant','Hi, I’m StuVI. What are you working through today?');} // Never trigger a phone keyboard just by opening the chat.
   else launch.focus({preventScroll:true});
  };
  const send=async(q)=>{
