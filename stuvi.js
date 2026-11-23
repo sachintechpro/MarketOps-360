@@ -81,6 +81,8 @@ function localAnswer(question,c=context()){
  if(!q)return null;
  if(/^(hi|hey|hello|good morning|good afternoon|good evening)[!. ]*$/.test(q))return 'Hi, I’m StuVi. You’re viewing '+label()+' as '+c.role+'. What are you trying to decide?';
  if(/^(help|what can you do|how can you help|who are you)\??$/.test(q))return 'I can spot issues in this demo, explain a number, or help you find the next decision. Try “What needs attention?”';
+ // Leave nuanced reasoning and trade-off questions for StuVi's AI service.
+ if(/^(why\b|how\b|what if\b|would it\b|should we\b|compare\b|evaluate\b|help me decide\b)/.test(q))return null;
  if(/^(summari[sz]e|quick read|brief me|give me a summary|what am i looking at|what is this page)/i.test(q))return brief(c.pagePurpose+' '+nextDecision(c),350);
  if(/(what needs attention|what should i do|next action|next decision|biggest priority|where should i start|what should we do first|what is urgent|prioriti[sz]e)/i.test(q))return nextDecision(c);
  if(/(risk|blocker|escalat|dependency|issue|raid)/i.test(q))return riskSummary(c);
