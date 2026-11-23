@@ -317,7 +317,7 @@ render=function(){
 document.addEventListener('DOMContentLoaded',()=>{
  const chat=document.querySelector('#contextChat');
  if(!chat)return;
- chat.querySelector('.chat-launch')?.setAttribute('aria-label','Ask StuVi for contextual help');
+ chat.querySelector('.chat-launch')?.setAttribute('aria-label','Open StuVI — Your Virtual Intelligence');
  const input=chat.querySelector('.chat-input'),send=chat.querySelector('.chat-ask');
  if(input&&send)input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();send.click();}});
 });
