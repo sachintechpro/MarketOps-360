@@ -27,3 +27,8 @@
 }
 @media(max-width:370px){#contextChat .stuvi-suggestions{gap:5px}#contextChat .stuvi-suggestions button{font-size:10px;padding:7px}#contextChat .chat-head b{font-size:16px}}
 @media(prefers-reduced-motion:reduce){#contextChat .chat-launch,#contextChat .chat-body{transition:none;scroll-behavior:auto}}
+
+/* Portrait only: preserve StuVi panel, placement and interactions. */
+#contextChat .chat-launch.stuvi-avatar-launch{display:grid;place-items:center;overflow:hidden;padding:0;background:#e8eff8;border:2px solid #fff;line-height:0}
+#contextChat .chat-launch.stuvi-avatar-launch:hover{background:#e8eff8}
+#contextChat .stuvi-avatar-launch img{display:block;width:100%;height:100%;object-fit:cover;border-radius:50%;pointer-events:none}
