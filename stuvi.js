@@ -134,7 +134,7 @@ function mount(){
   return;
  }
  chat=document.createElement('div');chat.id='contextChat';
- chat.innerHTML='<button class="chat-launch" type="button" aria-label="Ask StuVi for help" aria-expanded="false" aria-controls="stuvi-panel">?</button>'+
+ chat.innerHTML='<button class="chat-launch stuvi-avatar-launch" type="button" aria-label="Open StuVi assistant" aria-expanded="false" aria-controls="stuvi-panel"><img src="stuvi-avatar.webp" alt="" width="54" height="54" decoding="async"></button>'+
   '<section id="stuvi-panel" class="chat-panel stuvi-panel" role="dialog" aria-label="StuVi executive assistant" aria-hidden="true">'+
    '<div class="chat-head"><div><b>StuVi <span class="stuvi-indicator">Demo assistant</span></b><small class="chat-context"></small></div><button type="button" class="chat-close" aria-label="Close StuVi">×</button></div>'+
    '<div class="chat-body" role="log" aria-live="polite" aria-relevant="additions text"></div>'+
